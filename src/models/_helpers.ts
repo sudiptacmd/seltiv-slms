@@ -1,0 +1,38 @@
+import mongoose, { Schema, type Model } from "mongoose";
+
+/** Reuse a compiled model across hot reloads / serverless invocations. */
+export function defineModel<T>(name: string, schema: Schema): Model<T> {
+  return (mongoose.models[name] as Model<T>) ?? mongoose.model<T>(name, schema);
+}
+
+export const baseSchemaOptions = {
+  timestamps: true,
+  toJSON: {
+    virtuals: true,
+    transform(_doc: unknown, ret: Record<string, unknown>) {
+      ret.id = ret._id;
+      delete ret.__v;
+      return ret;
+    },
+  },
+  toObject: { virtuals: true },
+};
+
+export type Ref = mongoose.Types.ObjectId;
+export const ObjectId = Schema.Types.ObjectId;
+
+/** Atomic incrementing counters for human-readable reference numbers. */
+const counterSchema = new Schema({
+  _id: { type: String, required: true },
+  seq: { type: Number, default: 0 },
+});
+export const Counter = defineModel<{ _id: string; seq: number }>("Counter", counterSchema);
+
+export async function nextSeq(key: string): Promise<number> {
+  const doc = await Counter.findByIdAndUpdate(
+    key,
+    { $inc: { seq: 1 } },
+    { new: true, upsert: true },
+  ).lean();
+  return doc!.seq;
+}

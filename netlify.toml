@@ -1,0 +1,20 @@
+# Netlify — demo hosting for Seltiv SLMS.
+# Production runs on a VPS with `next start` (see docs/DEPLOYMENT.md).
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+  NPM_FLAGS = "--legacy-peer-deps"
+  NODE_OPTIONS = "--max-old-space-size=4096"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Scheduled jobs — Netlify Scheduled Functions can POST to these with the
+# CRON_SECRET bearer token. On the VPS use system cron instead.
+#   /api/cron/attendance-lock      daily 22:00
+#   /api/cron/attendance-digest    weekdays 11:00
+#   /api/cron/fee-reminders        weekly

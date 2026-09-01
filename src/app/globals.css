@@ -1,0 +1,107 @@
+@import "tailwindcss";
+
+/*
+  Design tokens lifted from the proposal's Broadsheet system
+  (misc/_ds/broadsheet-.../styles.css) so the app matches what was sold.
+*/
+@theme {
+  --color-bg: #faf9f5;
+  --color-surface: #ffffff;
+  --color-panel: #f3f2f2;
+  --color-ink: #201e1d;
+  --color-muted: #6b6866;
+  --color-line: #e2e0da;
+  --color-line-strong: #cfccc4;
+  --color-neutral: #7d7979;
+  --color-neutral-strong: #444141;
+
+  --color-accent: #0088b0;
+  --color-accent-50: #e9f8ff;
+  --color-accent-100: #cbeeff;
+  --color-accent-600: #1186ac;
+  --color-accent-700: #006786;
+  --color-accent-900: #0a303e;
+
+  --color-accent2: #d6006c;
+  --color-accent2-50: #fff1f4;
+  --color-accent2-100: #ffdee6;
+  --color-accent2-700: #aa0b56;
+  --color-accent2-900: #4b1528;
+
+  --color-yellow: #edbb00;
+  --color-ok: #1a7f4b;
+  --color-ok-bg: #e4f4ea;
+  --color-warn: #b25a00;
+  --color-warn-bg: #fbeede;
+  --color-danger: #b0102b;
+  --color-danger-bg: #fbe6e8;
+
+  --font-serif: var(--font-source-serif), Georgia, "Times New Roman", serif;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --radius-sm: 2px;
+  --radius: 3px;
+  --radius-lg: 6px;
+
+  --shadow-card: 0 1px 2px rgba(45, 43, 43, 0.06), 0 1px 3px rgba(45, 43, 43, 0.05);
+  --shadow-pop: 0 12px 32px rgba(45, 43, 43, 0.16);
+}
+
+:root {
+  color-scheme: light;
+}
+
+* {
+  border-color: var(--color-line);
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, .font-serif {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-accent) 24%, transparent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+  border-radius: 2px;
+}
+
+/* thin, quiet scrollbars for the data-dense panels */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line-strong) transparent;
+}
+
+input, select, textarea, button {
+  font: inherit;
+}
+
+table { border-collapse: collapse; }
+
+/* number inputs: hide spinners */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
+
+@media print {
+  .no-print { display: none !important; }
+  body { background: #fff; }
+}

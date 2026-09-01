@@ -1,0 +1,1399 @@
+<x-dc>
+<!-- @template name="Deck" description="A twenty-three-slide presentation starter: cover, contents, dividers, columns, quadrants, a data table, SVG charts, color-separation plates, bleed imagery, a quote and a close, on the theme's tokens" -->
+<helmet>
+<link rel="stylesheet" href="../_ds/broadsheet-b97c767c-2377-4117-b927-29a357e50730/styles.css">
+<title>Seltiv SLMS — Proposal</title>
+<script src="../_ds/broadsheet-b97c767c-2377-4117-b927-29a357e50730/print-plates.js"></script>
+<script src="./ds-base.js"></script>
+<script src="./image-slot.js"></script>
+<script src="./support.js"></script>
+<style>
+/* Template scaffolding — slide layout and projection-scale sizing only; every
+   color, font, radius and shadow comes from ../../styles.css. Change one
+   number here to re-size the whole deck. */
+deck-stage {
+  --type-display: 126px;
+  --type-title: 68px;
+  --type-subtitle: 42px;
+  --type-body: 36px;
+  --type-small: 34px;
+  --type-kicker: 26px;
+  --pad-x: 144px;
+  --page-foot-note: "Confidential — July 2026"; /* the deck-wide folio text (page furniture; see the PAGE FURNITURE note below) */
+  --pad-top: 108px;
+  --pad-bottom: 108px;
+  --baseline: 54px; /* grid unit — one default-text line: the 36px body at its 1.5 deck leading (an airy serif asks for more lead than a compact sans; 20 gridlines tile the 1080 stage exactly) */
+  /* The shared anchor (review round 3): most slides hang their first ink
+     from one top-left spot — the content title's cap corner: x at the text
+     axis, cap top at 4 gridlines minus the title's cap (216 − 68 × 0.670 =
+     170.44px; Source Serif 4's OS/2 capHeight is 670/1000). Same-size
+     titles (dividers, split) anchor with the content classes' own
+     padding/margin calc and register exactly; display-size blocks (cover,
+     hero, quote) trim to their cap and take this constant as padding, so
+     the INK corner aligns even as their baselines sit off-grid (the shared
+     contract's block-positioning exemption — deck-templates.md). The
+     full-bleed slide keeps its foot-pinned type: over photography the
+     scrim grammar owns the layout. */
+  --cap-anchor: 170.44px;
+}
+
+.slide {
+  display: flex; flex-direction: column;
+  background: var(--color-bg); color: var(--color-text);
+  font-family: var(--font-body);
+  text-wrap: pretty; /* inherited: better breaks, no orphans on wrapped blocks */
+  padding: var(--pad-top) var(--pad-x) var(--pad-bottom);
+  print-color-adjust: exact; -webkit-print-color-adjust: exact;
+}
+/* Press-sheet furniture (reviews round 3-4): corner crop marks and, at
+   the four edge centers, TRUE registration targets — hairline cross,
+   fine circle, solid center dot, the mark a pressman actually registers
+   to (round 4, from Barron's reference; the round-3 stylized crosses and
+   bare rings retire). Painted as gradient stacks in currentColor (ink on
+   paper everywhere now — no dark surfaces remain), at 65% ink — effective
+   #6a6868, 5.0:1 on paper: present as furniture, quieter than type —
+   ornament, not interface. Each target composes in a 36px tile: 36px
+   hairline arms, a 1.5px ring at r≈9.75, a solid dot at r 3.5. The bleed
+   slide goes without: the photograph owns its edges (the half-bleeds'
+   marks-over-plate are round 6's requested exception — see their rule
+   below). */
+.slide::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  --rm: color-mix(in srgb, currentColor 65%, transparent);
+  background:
+    linear-gradient(var(--rm), var(--rm)) 20px 20px / 28px 1px,
+    linear-gradient(var(--rm), var(--rm)) 20px 20px / 1px 28px,
+    linear-gradient(var(--rm), var(--rm)) calc(100% - 20px) 20px / 28px 1px,
+    linear-gradient(var(--rm), var(--rm)) calc(100% - 20px) 20px / 1px 28px,
+    linear-gradient(var(--rm), var(--rm)) 20px calc(100% - 20px) / 28px 1px,
+    linear-gradient(var(--rm), var(--rm)) 20px calc(100% - 20px) / 1px 28px,
+    linear-gradient(var(--rm), var(--rm)) calc(100% - 20px) calc(100% - 20px) / 28px 1px,
+    linear-gradient(var(--rm), var(--rm)) calc(100% - 20px) calc(100% - 20px) / 1px 28px,
+    linear-gradient(var(--rm), var(--rm)) center 25.5px / 36px 1px, /* arm centered on the ring (tile top 8 + r 18 − ½px) */
+    linear-gradient(var(--rm), var(--rm)) center 8px / 1px 36px,
+    radial-gradient(circle, transparent 9px, var(--rm) 9px 10.5px, transparent 11px) center 8px / 36px 36px,
+    radial-gradient(circle, var(--rm) 0 3.5px, transparent 4px) center 8px / 36px 36px,
+    linear-gradient(var(--rm), var(--rm)) center calc(100% - 25.5px) / 36px 1px,
+    linear-gradient(var(--rm), var(--rm)) center calc(100% - 8px) / 1px 36px,
+    radial-gradient(circle, transparent 9px, var(--rm) 9px 10.5px, transparent 11px) center calc(100% - 8px) / 36px 36px,
+    radial-gradient(circle, var(--rm) 0 3.5px, transparent 4px) center calc(100% - 8px) / 36px 36px,
+    linear-gradient(var(--rm), var(--rm)) 8px center / 36px 1px,
+    linear-gradient(var(--rm), var(--rm)) 25.5px center / 1px 36px,
+    radial-gradient(circle, transparent 9px, var(--rm) 9px 10.5px, transparent 11px) 8px center / 36px 36px,
+    radial-gradient(circle, var(--rm) 0 3.5px, transparent 4px) 8px center / 36px 36px,
+    linear-gradient(var(--rm), var(--rm)) calc(100% - 8px) center / 36px 1px,
+    linear-gradient(var(--rm), var(--rm)) calc(100% - 25.5px) center / 1px 36px,
+    radial-gradient(circle, transparent 9px, var(--rm) 9px 10.5px, transparent 11px) calc(100% - 8px) center / 36px 36px,
+    radial-gradient(circle, var(--rm) 0 3.5px, transparent 4px) calc(100% - 8px) center / 36px 36px;
+  background-repeat: no-repeat;
+}
+.bleed::before { content: none; }
+/* Half-bleeds (review round 6 — Barron: show the registration marks at
+   the slide's horizontal center): the full mark set returns, top and
+   bottom center targets included — they sit on the seam where the
+   photograph meets the copy panel, the trim line a pressman would
+   register — and the furniture lifts above the plate (z-index) so the
+   sheet's marks print over the photograph, as press furniture does.
+   Round 4's tipped-in-plate reading (marks under the photo, centers
+   removed) is superseded by this request. */
+.half-bleed::before { z-index: 1; }
+/* The press color bar — the four process patches, cover and close only
+   (the sheet's first and last page carry the control strip). A real
+   element, not the slide's ::after: that pseudo belongs to the
+   ?baselines debug overlay, and sharing it collapsed the overlay to the
+   bar's box on the cover slides (review finding). Review round 5
+   (Barron): the control strips move into the trim margin — this bar
+   sits on the TOP border, its outer edge on the corner marks' 20px
+   line, centered in the gap between the corner mark (ends x=48) and
+   the top-center target (starts x=942), the same band and centerline
+   (x=495) the dividers' strips take. Patches at 16px, down from the
+   old 64x14 floating bar. */
+.color-bar {
+  position: absolute; left: 463px; top: 20px;
+  width: 64px; height: 16px;
+  background: linear-gradient(to right,
+    var(--color-accent) 0 25%, var(--color-accent-2) 25% 50%,
+    var(--color-process-yellow) 50% 75%, var(--color-text) 75%);
+}
+
+/* — shared pieces — */
+/* Baseline grid: text sits on a 54px rhythm (--baseline) measured from the
+   slide's top edge. Snapped text blocks are trimmed to their cap and baseline
+   edges (text-box), so a block's bottom edge IS its last baseline and the next
+   block's first baseline lands N gridlines down with
+   margin-top: calc(N * var(--baseline) - 1cap). Compact rhythms (table rows,
+   chart axes and ticks) sit on the 27px half-step. Review the rhythm with
+   ?baselines in the URL, or press B (script in the helmet) —
+   half-step lines draw fainter than full ones. */
+/* No rules: Broadsheet structures the page with whitespace and the serif
+   scale, never with lines or boxes — so this deck draws no ticks, no
+   divider rules, no contents-row rules. The data table is the one exception:
+   its header and row rules belong to the system's own .table component. Marks
+   that would be rules elsewhere are set as type instead (the bullets'
+   hanging marks — solid bullets, the briefs-column marker). Review round 3:
+   the process inks now arrive through the print treatments — the plate
+   numerals on the dividers and hero, and the four-color separation on every
+   photograph (both in styles.css) — rather than as lone spot moments; the
+   registration marks at the sheet edges are the other print furniture, in
+   currentColor (see .slide::before). Spot usage elsewhere stays deliberate:
+   cyan on the contents numbers and chart highlights, as before. */
+/* No kicker row: the review cut the typographic eyebrows — the uppercase
+   accent slugs that sat over every title were furniture, and this system's
+   own grammar ("size, weight and measure organise the page") says the title
+   carries the slide. Wayfinding stays with the contents page and the
+   dividers' ghost numerals; the title takes the head at a newspaper
+   headline's height (see .content). */
+/* Justified paragraphs — the newspaper grammar: running prose sets justified
+   with automatic hyphenation (Chromium hyphenates against the page's lang;
+   the last line stays ragged-right, text-align-last's default). The justified
+   classes are the paragraph prose: the hero and chart captions and the
+   image-slide notes. Everything else keeps the ragged edge on purpose: the
+   cover subtitle is display-adjacent (a hyphenated break on the cover costs
+   more than the ragged edge), bullets are a LIST (their marks hang left of the axis, and
+   justified list items read as gappy slabs), the quote is display type, and
+   the figcaption/meta lines are single-line furniture. Hyphenation is
+   capped with hyphenate-limit-chars: 6 3 3 (word >= 6 letters, >= 3 each
+   side): unconstrained, Chromium broke five-letter words after two
+   characters ("im-age", "to-ken") in review renders, and the cap trades
+   those stubs for slightly looser lines. Re-check rivers in renders when
+   narrowing any measure below ~30ch. */
+.slide-title {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: var(--type-title); line-height: calc(1.5 * var(--baseline)); letter-spacing: -0.015em; margin: 0;
+  margin-left: -0.035em; /* optical left alignment — see the note below */
+  text-box: trim-both cap alphabetic;
+}
+/* Optical left alignment — the same deliberate exception to box-edge
+   alignment the Nocturne deck documents, re-derived for this face (the rules
+   generalize, the numbers never do — see ../../../deck-templates.md). Source
+   Serif's bearings are tighter and flatter than a geometric sans: measured
+   ink edges (render scans agree with the font's hmtx table) put flat-stem
+   caps at 0.039em, round caps at 0.041em, T 0.020em, A 0.007em, W 0.011em in
+   the Semibold, and proportional digits between 0.025 and 0.045em. The cap
+   classes return most of that with -0.035em (flats and rounds land within
+   half a pixel of the axis even at display sizes; T and the diagonals
+   overhang slightly, as hand-set optical margins would). The digit classes
+   take -0.033em with proportional figures: this face defaults to TABULAR
+   figures, whose "1" pads its bearing to 0.074em — 24px at the hero size —
+   so single display numbers set "pnum" (contents numbers and chart
+   text are columns and keep the tabular default). The margins live in each
+   class's own rule; nothing hangs off these classes here (Broadsheet draws
+   no ticks), so no reverse terms are needed except the half-bleed column
+   offset, which folds the term in. */
+.pin-bottom { position: absolute; left: var(--pad-x); right: var(--pad-x); bottom: var(--pad-bottom); }
+.meta { display: flex; align-items: baseline; gap: 18px; font-size: var(--type-kicker); color: color-mix(in srgb, var(--color-text) 55%, transparent); }
+.meta span { text-box: trim-both cap alphabetic; } /* pinned at pad-bottom: baseline lands on the 18th gridline at 972 */
+
+/* — page furniture (review round 8, every deck): the folio — */
+/* PAGE FURNITURE — on by default. To remove the page numbers and footer
+   text deck-wide, add data-no-page-furniture to the deck's <x-import>
+   mount (a one-line tweak — it renders on the <deck-stage>); to change
+   the text, edit --page-foot-note in
+   the deck's token block. The folio sits in the sheet margin below the content's
+   972 footer gridline, right-aligned clear of the bottom-right corner mark
+   and the bottom-center target, at the press furniture's 65% ink. Carried
+   by the content slides; the covers keep their meta rows instead, the
+   dividers' margin band already carries the press instruments, and the
+   full bleed's photograph owns its edges — but every slide still counts,
+   so the printed number stays truthful to position. */
+deck-stage { counter-reset: page; }
+.slide { counter-increment: page; }
+.page-foot {
+  position: absolute; right: var(--pad-x); bottom: 38px;
+  font-size: var(--type-kicker); letter-spacing: 0.04em; /* 24px — the six decks share the kicker-scale folio (WCAG large text; measured 5.0:1 at the 65% ink) */
+  color: color-mix(in srgb, currentColor 65%, transparent);
+  text-box: trim-both cap alphabetic;
+}
+.page-foot::before { content: counter(page) " · "; font-feature-settings: "tnum" 1; }
+.page-foot::after { content: var(--page-foot-note); }
+deck-stage[data-no-page-furniture] .page-foot, deck-stage[data-no-page-furniture] .page-head { display: none !important; }
+.half-bleed.flip .page-foot { right: auto; left: var(--pad-x); } /* the folio follows the copy half — type never sits on the photograph (deck-templates.md law) */
+
+/* — cover and close — */
+/* Top-anchored (review round 3): the display's cap corner sits on the
+   shared anchor — the cover reads as page one of the same sheet, not a
+   centered plate. */
+.cover { justify-content: flex-start; padding-top: var(--cap-anchor); }
+.cover .rise { display: flex; flex-direction: column; gap: 42px; }
+.display {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: var(--type-display); line-height: calc(2.5 * var(--baseline)); letter-spacing: -0.02em; margin: 0;
+  margin-left: -0.035em; /* optical left alignment — see the .slide-title note */
+  text-box: trim-both cap alphabetic; /* box top = cap top, so the cover's padding IS the anchor */
+}
+.cover-sub { font-size: var(--type-subtitle); line-height: var(--baseline); max-width: 36ch; margin: 0; /* the standfirst keeps the ragged edge: it is display-adjacent, and at this 36ch measure justification hyphenates the deck's first line of prose — see the justified-paragraphs note */ }
+
+/* — contents — */
+/* Whitespace rows, not ruled ones: with no rules there is no band to center
+   in, so the row baselines sit straight on every third gridline — the
+   optical-centering exception other decks need for their ruled rows does not
+   arise here. */
+.toc { display: flex; flex-direction: column; max-width: 1040px;
+  font-size: var(--type-subtitle); /* the content margin's 1cap term must resolve against the ROW text's size, so the first row's baseline lands on its gridline */ }
+.toc-row { display: flex; align-items: baseline; gap: 54px; }
+.toc-row > span { text-box: trim-both cap alphabetic; }
+.toc-row + .toc-row { margin-top: calc(3 * var(--baseline) - 1cap); }
+.toc-num { font-size: var(--type-kicker); color: var(--color-accent); }
+
+/* — section dividers — */
+/* Dividers are the press sheet's proof margin (review round 4 — Barron:
+   this template has no dark surfaces; the round-3 ink reverse retires).
+   The slide stays on the paper, and the section break is carried by the
+   press furniture rather than a ground change — the shared contract's
+   ground-of-its-own rule takes this deck as its documented exception
+   (deck-templates.md): a field of misregistered process halftone screens
+   bleeding off the right of the sheet, the plate numeral on the paper
+   (as on the hero), and the pressman's instruments — the ten-step
+   black-and-white wedge, the eight-patch color scale, and a star target.
+   Title and numeral keep their round-3 anchor positions; all type is ink
+   on the page's own values (title 14.9:1). The furniture sits outside
+   .rise on purpose: the sheet's margin is pre-printed, only the content
+   enters. */
+.divider { justify-content: flex-start; padding-top: calc(4 * var(--baseline)); }
+.divider .rise { display: flex; flex-direction: column; align-items: flex-start; }
+.divider .slide-title { margin-top: -1cap; /* cap-trimmed onto the 4th gridline, as on .content */ }
+/* The halftone field — three process screens at the press angles (C 15°,
+   M 75°, Y 0°; the K screen is retired with the K plate — round 4's rule
+   is that darkness only ever arrives as overlap), each a dot lattice
+   rotated to its angle and nudged out of register, multiplied over each
+   other on the paper: the rosette moiré of a print under the loupe,
+   bleeding off the right of the sheet. Review round 5 (Barron: smaller
+   dots, more of a gradient): the screens drop to r 1.4px on a 10px
+   pitch (≈6% coverage a screen, from the old r 2.6 / 14px ≈11%), and
+   the field ramps — a mask fades it up from the paper at its left
+   boundary to full strength at the bleed edge, the screen coming up to
+   density the way a vignetted halftone does. The mask sits on the
+   container so the three multiplied screens fade as one print, keeping
+   the rosette structure through the ramp. */
+.press-field { position: absolute; top: 0; right: 0; bottom: 0; width: 560px; overflow: hidden; pointer-events: none;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 62%);
+  mask-image: linear-gradient(to right, transparent, #000 62%); }
+.press-field i { position: absolute; inset: -120%; /* wide enough that the 75° screen still covers the field's corners after rotation */ mix-blend-mode: multiply;
+  background-image: radial-gradient(circle, var(--pf-ink) 0 1.4px, transparent 1.7px);
+  background-size: 10px 10px; }
+.press-field .pf-y { --pf-ink: var(--color-process-yellow); transform: rotate(0.001deg) translate(-3px, 4px); }
+.press-field .pf-c { --pf-ink: var(--color-accent); transform: rotate(15deg) translate(2px, -1px); }
+.press-field .pf-m { --pf-ink: var(--color-accent-2); transform: rotate(75deg) translate(4px, 3px); }
+.ghost-num {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 360px; letter-spacing: -0.02em; /* grown from the old ghost's 280 — the plate figure is the divider's statement, and the em-scaled plate spread grows with it */
+  text-box: trim-both cap alphabetic;
+  /* Below the anchored title, cap-trimmed: baseline on the 14th gridline —
+     the numeral takes the open field the centered cluster left behind. The
+     0.12em terms absorb the .cmyk-num component's padding bleed (its
+     uniform negative margin is overridden on the sides we position, so the
+     bleed must be returned explicitly); the -0.033em is the digit classes'
+     optical alignment, as everywhere. */
+  margin: calc(10 * var(--baseline) - 1cap - 0.12em) -0.12em -0.12em calc(-0.033em - 0.12em);
+}
+/* The pressman's scales and the star target (round 4, every divider) —
+   drawn instruments, not images. The wedge steps mix from the ink token
+   in tenths (ink → paper, left to right); the color scale derives its
+   overlap patches by actually multiplying the ink layers
+   (background-blend-mode), so the printed secondaries are the inks' own
+   products; the star target is a repeating-conic burst under a radial
+   mask, the slur gauge a proof sheet carries. All aria-hidden ornament
+   in the sheet margin. Review round 5 (Barron: smaller, aligned with
+   the corner marks' outer edge, centered between the marks; color
+   patches on the top border): both strips leave the content area for
+   the trim margin, patches at 16px outer (border-box; the -1px
+   collapse makes each later patch step 15px, and the first patch's
+   own margin starts the strip 1px left of its left value — so the
+   wedge spans 151px and the color scale 121px). Both strips center
+   on x=494.5 in the gap between the corner mark (ends x=48) and the
+   center target (starts x=942), matching the cover bar's 495 to the
+   half-pixel. The B&W wedge runs along the BOTTOM border — outer
+   edge on the corner marks' 20px line (bottom: 20px); the color
+   scale turns horizontal and takes the TOP border directly above it,
+   outer edge on the same 20px line. The patch letters retire with
+   the size — a real control strip carries none. The star joins the
+   wedge on the bottom band, scaled to it. */
+.scale-bw { position: absolute; left: 420px; bottom: 20px; display: flex; }
+.scale-bw i { width: 16px; height: 16px; border: 1px solid var(--color-divider); margin-left: -1px; }
+.scale-bw i:nth-child(1)  { background: var(--color-text); }
+.scale-bw i:nth-child(2)  { background: color-mix(in srgb, var(--color-text) 89%, var(--color-bg)); }
+.scale-bw i:nth-child(3)  { background: color-mix(in srgb, var(--color-text) 78%, var(--color-bg)); }
+.scale-bw i:nth-child(4)  { background: color-mix(in srgb, var(--color-text) 67%, var(--color-bg)); }
+.scale-bw i:nth-child(5)  { background: color-mix(in srgb, var(--color-text) 56%, var(--color-bg)); }
+.scale-bw i:nth-child(6)  { background: color-mix(in srgb, var(--color-text) 44%, var(--color-bg)); }
+.scale-bw i:nth-child(7)  { background: color-mix(in srgb, var(--color-text) 33%, var(--color-bg)); }
+.scale-bw i:nth-child(8)  { background: color-mix(in srgb, var(--color-text) 22%, var(--color-bg)); }
+.scale-bw i:nth-child(9)  { background: color-mix(in srgb, var(--color-text) 11%, var(--color-bg)); }
+.scale-bw i:nth-child(10) { background: var(--color-bg); }
+.scale-color { position: absolute; left: 435px; top: 20px; display: flex; }
+.scale-color i { width: 16px; height: 16px; border: 1px solid var(--color-divider); margin-left: -1px; }
+.scale-color .sc-c   { background: var(--color-accent); }
+.scale-color .sc-m   { background: var(--color-accent-2); }
+.scale-color .sc-y   { background: var(--color-process-yellow); }
+.scale-color .sc-cm  { background: linear-gradient(var(--color-accent), var(--color-accent)), linear-gradient(var(--color-accent-2), var(--color-accent-2)); background-blend-mode: multiply; }
+.scale-color .sc-my  { background: linear-gradient(var(--color-accent-2), var(--color-accent-2)), linear-gradient(var(--color-process-yellow), var(--color-process-yellow)); background-blend-mode: multiply; }
+.scale-color .sc-cy  { background: linear-gradient(var(--color-accent), var(--color-accent)), linear-gradient(var(--color-process-yellow), var(--color-process-yellow)); background-blend-mode: multiply; }
+.scale-color .sc-cmy { background: linear-gradient(var(--color-accent), var(--color-accent)), linear-gradient(var(--color-accent-2), var(--color-accent-2)), linear-gradient(var(--color-process-yellow), var(--color-process-yellow)); background-blend-mode: multiply; }
+.scale-color .sc-k   { background: var(--color-text); }
+.star-target { position: absolute; left: 619px; bottom: 16px; width: 24px; height: 24px; border-radius: 50%; /* concentric with the wedge's band, a clear gap to its right */
+  background: repeating-conic-gradient(color-mix(in srgb, var(--color-text) 80%, transparent) 0 5deg, transparent 5deg 10deg);
+  -webkit-mask: radial-gradient(circle, transparent 0 1.5px, #000 2.5px 11px, transparent 12px);
+  mask: radial-gradient(circle, transparent 0 1.5px, #000 2.5px 11px, transparent 12px); }
+
+/* — content slides — */
+.content { padding-top: calc(4 * var(--baseline)); /* title baseline on the 4th gridline — with the kicker row cut, the head closes up to a broadsheet headline's drop; the first-element margins below grew a gridline each, so every baseline from the body down holds its old gridline */ }
+.content > .slide-title, .content > .chart-head { margin-top: -1cap; } /* cap-trimmed: the baseline, not the cap top, sits on the gridline */
+.content > .bullets { margin-top: calc(4 * var(--baseline) - 1cap); }
+.content > .table { margin-top: calc(3 * var(--baseline)); } /* top edge on a gridline */
+.content > .toc { margin-top: calc(4 * var(--baseline) - 1cap); } /* first row's baseline four gridlines below the title's (the title rose a gridline; the rows did not) */
+.content > figure { margin-top: calc(2 * var(--baseline)); }
+.content > .chart-caption { margin-top: calc(2 * var(--baseline) - 1cap); }
+.bullets { display: flex; flex-direction: column; max-width: 1200px; margin: 0; padding: 0; list-style: none; font-size: var(--type-body); }
+.bullets li {
+  line-height: var(--baseline); text-box: trim-both cap alphabetic;
+  /* the bullet mark is type, not a rule: a solid bullet (the mark a
+     broadsheet's briefs column sets; the face has no geometric squares, and
+     Google's latin subset wouldn't serve them) hung clear of the text axis
+     by its own measured advance ("• " = 0.305em + 0.233em in the Regular),
+     so wrapped lines stay flush on the axis */
+  text-indent: -0.538em;
+}
+.bullets li::before { content: "• "; }
+.bullets li + li { margin-top: calc(2 * var(--baseline) - 1cap); } /* every other gridline */
+
+/* — column and quadrant layouts (review round 8, every deck) — */
+/* Broadsheet divides with whitespace, never rules: the columns are
+   newspaper setting — justified body copy with hyphenation, one text
+   axis per column — and the quadrant matrix is four whitespace-pitched
+   cells, its axis poles set as type (the small muted single-line
+   furniture class), because marks that would be rules elsewhere are
+   set as type here. Column tops cap-trim onto the bullets' gridline;
+   cell heads take the bold at body size (no kicker row in this deck). */
+.cols { display: grid; gap: calc(2 * var(--baseline)); margin-top: calc(4 * var(--baseline) - 1cap); }
+.cols-2 { grid-template-columns: 1fr 1fr; }
+.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.cols p { font-size: var(--type-small); line-height: var(--baseline); margin: 0;
+  text-align: justify; hyphens: auto; hyphenate-limit-chars: 6 3 3;
+  text-box: trim-both cap alphabetic; }
+.cols h3 { font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: var(--type-body); margin: 0 0 calc(1 * var(--baseline) - 1cap);
+  text-box: trim-both cap alphabetic; }
+.quad { display: grid; grid-template-columns: 1fr 1fr; gap: calc(2 * var(--baseline)) 96px;
+  margin-top: calc(4 * var(--baseline) - 1cap); }
+.quad h3 { font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: var(--type-body); margin: 0 0 calc(1 * var(--baseline) - 1cap);
+  text-box: trim-both cap alphabetic; }
+.quad p { font-size: var(--type-small); line-height: var(--baseline); margin: 0;
+  text-align: justify; hyphens: auto; hyphenate-limit-chars: 6 3 3;
+  text-box: trim-both cap alphabetic; }
+.quad-axis { display: flex; justify-content: space-between; margin-top: calc(2 * var(--baseline) - 1cap);
+  font-size: var(--type-kicker); color: color-mix(in srgb, var(--color-text) 55%, transparent); }
+.quad-axis span { text-box: trim-both cap alphabetic; }
+
+/* — data table (component class at projection scale) — */
+.slide .table { max-width: 1560px; font-size: 31px; }
+/* 108px row pitch (two gridlines): the component's own rules land on
+   gridlines, and — the deliberate optical exception the ruled-row decks
+   share — the cell text centers its cap box between rule centerlines (the
+   collapsed 1px rules paint centered on cell boundaries at gridline-0.5px,
+   hence the 0.5px terms; the cap terms cancel, so the pitch holds in any
+   font). The rules themselves are the system's .table component's: this deck
+   adds no rules of its own. */
+.slide .table th, .slide .table td {
+  text-box: trim-both cap alphabetic;
+  padding: calc(var(--baseline) - 0.5cap - 0.5px) 28px calc(var(--baseline) - 0.5cap - 0.5px);
+}
+.slide .table th { font-size: var(--type-kicker); }
+.slide .table tbody tr:hover { background: none; } /* a projected slide has no hover state */
+.slide .table th:first-child, .slide .table td:first-child { padding-left: 0; }
+.slide .table th:last-child, .slide .table td:last-child { padding-right: 0; }
+.slide .table td:first-child { width: 64px; position: relative; }
+/* Out of flow so its 40px box can't stretch the cap-trimmed row; centered on
+   the 108px row band like the row text (the cell's padding box starts half a
+   collapsed border below the row boundary, so --baseline - 20px lands the
+   40px box on whole pixels at the inter-rule center). Transform-free so
+   exporters that read offsets stay exact. */
+.slide .table .swatch { position: absolute; left: 0; top: calc(var(--baseline) - 20px); }
+.swatch { display: inline-block; width: 40px; height: 40px; border-radius: var(--radius-sm); box-shadow: var(--shadow-sm); }
+
+/* — hero figure — */
+/* Top-anchored (review round 3): the numeral's cap corner sits on the
+   shared anchor. The figure is set as the plate numeral (.cmyk-num,
+   styles.css) — on the paper ground the white-of-the-sheet union is
+   invisible and the plates multiply straight onto the page, so the hero
+   carries the three process plates rather than the single magenta it had
+   (the .paper span carries the figure once for assistive tech; the
+   plate spans are aria-hidden repeats). */
+.hero { justify-content: flex-start; padding-top: var(--cap-anchor); gap: 42px; /* review round 4: the K plate is gone and the remaining spread rides only 0.025em below the baseline, so the caption returns to the deck's standard display gap */ }
+.hero-num {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 320px; letter-spacing: -0.03em;
+  text-box: trim-both cap alphabetic; /* box top = cap top = the anchor */
+  /* the 0.12em terms return the .cmyk-num padding bleed, as on .ghost-num */
+  margin: -0.12em -0.12em -0.12em calc(-0.033em - 0.12em);
+}
+.hero-caption { font-size: var(--type-small); line-height: var(--baseline); max-width: 44ch; margin: 0; text-align: justify; hyphens: auto; hyphenate-limit-chars: 6 3 3; }
+
+/* — charts (static SVG on the tokens; no script, no chart library) — */
+/* Newsprint charts: data ink is near-black with the accent as the one spot
+   color per figure; grid and axis hairlines carry the divider token, solid
+   and full-width (hairlines inside a figure are data furniture, like the
+   table's rules — not page structure). */
+.chart { display: block; width: 100%; height: auto; overflow: visible; }
+.chart text {
+  font-family: var(--font-body); font-size: 24px;
+  fill: color-mix(in srgb, var(--color-text) 55%, transparent);
+}
+.chart .grid, .chart .axis { stroke: var(--color-divider); stroke-width: 1; }
+.chart .bar { fill: var(--color-neutral-800); }
+.chart .bar-hi { fill: var(--color-accent); }
+.chart .bar, .chart .bar-hi { rx: var(--radius-md); } /* barely-rounded tops at this radius scale; bottoms stay square under the plot clip */
+.chart .val { fill: color-mix(in srgb, var(--color-text) 70%, transparent); }
+.chart .ref { stroke: var(--color-accent-700); stroke-width: 1; stroke-dasharray: 8 8; }
+.chart .ref-label { fill: var(--color-accent-700); }
+.chart .hi-label { fill: var(--color-accent-700); }
+.chart .series-a, .key .series-a { stroke: var(--color-accent); stroke-width: 3; fill: none; }
+.chart .series-b, .key .series-b { stroke: var(--color-neutral-800); stroke-width: 3; fill: none; stroke-dasharray: 10 8; }
+.chart-caption { font-size: 27px; line-height: var(--baseline); max-width: 80ch; margin: 0; text-box: trim-both cap alphabetic; text-align: justify; hyphens: auto; hyphenate-limit-chars: 6 3 3; }
+/* Chart title row — title left, legend right, sharing one baseline. */
+.chart-head { display: flex; align-items: baseline; justify-content: space-between; font-size: var(--type-title); /* so the row's 1cap margin matches the title */ }
+.chart-legend { display: flex; align-items: baseline; gap: 16px; font-size: var(--type-kicker); color: color-mix(in srgb, var(--color-text) 55%, transparent); }
+.chart-legend span { text-box: trim-both cap alphabetic; }
+.chart-legend .key { width: 60px; height: 4px; overflow: visible; position: relative; top: -7px; } /* flex sits the box bottom on the baseline; the nudge lifts the key line to the label's optical center */
+.chart-legend .key:not(:first-child) { margin-left: 24px; }
+/* Timeline (same .chart text defaults as the other SVGs). These classes
+   carry color and size only; the geometry — one left edge per column and
+   the optically-set vertical cluster — is documented where it lives, in
+   the pattern comment inside the timeline SVG. The current milestone
+   takes the accent, as the highlighted bar does. */
+.chart .tl-line { stroke: var(--color-divider); stroke-width: 1; }
+.chart .tl-node { color: var(--color-neutral-800); } /* the mark's CROSS draws in currentColor; the quadrant inks are inline styles in the defs (use-shadow scoping) */
+.chart .tl-node-hi { color: var(--color-accent); }
+.chart .tl-date { fill: color-mix(in srgb, var(--color-text) 55%, transparent); letter-spacing: 0.08em; }
+.chart .tl-date-hi { fill: var(--color-accent); letter-spacing: 0.08em; }
+.chart .tl-label { fill: var(--color-text); font-size: 31px; }
+
+/* The separation offsets at projection scale (the .cmyk component leaves
+   them to the page — misregistration is sized to the output): a few pixels
+   at 1920 reads as a press slightly out of true; the fringes live at edges
+   and the dot screen ties the plates back together. */
+.cmyk .sep-m { translate: 5px 3px; }
+.cmyk .sep-y { translate: -5px -3px; }
+.cmyk .sep-k { translate: 3px 6px; }
+/* Round 9: the five static separation figures carry ONE image-slot inside
+   a .print wrapper filtered by the compound #sep-all — the plates extract
+   live from whatever image the slot holds. The .print component (filter,
+   hover register-resolve, slot sizing) and the #sep-all defs are the system's
+   own now — styles.css and print-plates.js, inlined in the bundle
+   every page loads (promoted in the landing divergence; they began here). The offsets
+   above still drive the apart slide's five-img films, which keep their
+   rotated, hover-registering structure (an SVG filter cannot rotate or
+   transition) — that slide's image stays the bundled print until the
+   image-slot change-event follow-up lands. Only the deck's own layout
+   stays local: */
+figure.cmyk.fill .print { position: absolute; inset: 0; height: 100%; }
+
+/* The plates pulled apart (review round 5, from the Cat-3 reference,
+   whose plate images float smaller than their paper field and slide
+   into register on hover). Same five-image .cmyk markup and live SVG
+   separations, but here each plate prints at 54% of the figure and
+   fans toward its own corner — cover-fit plates would all still cover
+   the box and their four-deep multiply reads as mud, so the plates
+   shrink and the paper shows between them, each film showing its own
+   ink with the full stack only where they cross. The invisible sizer
+   image still spans the figure, so the box holds the split column's
+   usual footprint. Hover gathers the fan to the center — the films
+   squared on the light table; the deck's press register belongs to
+   the previous slide, this one is the table. End-state is the base
+   style and the slide reads correctly with no interaction; the
+   transition gates on prefers-reduced-motion below. */
+.cmyk-apart { background: transparent; } /* review round 6 (Barron): no
+   backing panel — the figure's paper fill retires and the films sit
+   directly on the slide's own ground */
+.cmyk-apart::after { content: none; } /* and the box-wide dot screen goes
+   with it: the screen was the figure panel's texture, and without the
+   panel the treatments stand alone */
+.cmyk-apart img + img {
+  inset: auto; left: 50%; top: 50%; width: 54%; height: 54%;
+  transform: translate(-50%, -50%);
+  transition: translate 1.4s ease, rotate 1.4s ease;
+}
+/* Each film lies toward its own corner at a slight angle — squared
+   films read as a CSS grid, tilted ones as sheets set down by hand;
+   hover squares and gathers them. Sizing note for edits: a film
+   PAINTS well past its layout box — the separation filters run in
+   the SVG default filter region (-10%..110% of the box), and their
+   matrices' constant terms lay ink across that whole region, so each
+   54% film (484x324 here) paints as a ≈581x389 sheet (AABB ≈595x411
+   once rotated): the photo plus a solid ink border, the film base
+   carrying its tone. The offsets
+   below keep that PAINTED extent inside the ~896x600 split figure
+   (flex:1 of the 1632px content row less the 640px copy column and
+   96px gap) with a few px to spare — size against the painted sheet,
+   not getBoundingClientRect. */
+.cmyk-apart .sep-c { translate: -138px -82px; rotate: -2.2deg; }
+.cmyk-apart .sep-m { translate: 140px 84px; rotate: 1.9deg; }
+.cmyk-apart .sep-y { translate: -136px 82px; rotate: 1.3deg; }
+.cmyk-apart .sep-k { translate: 138px -84px; rotate: -1.6deg; }
+.cmyk-apart:hover .sep-c, .cmyk-apart:hover .sep-m,
+.cmyk-apart:hover .sep-y, .cmyk-apart:hover .sep-k { translate: 0 0; rotate: 0deg; }
+@media (prefers-reduced-motion: reduce) { .cmyk-apart img + img { transition: none; } }
+
+/* — image slide — */
+/* The copy column top-anchors (review round 3): its title takes the exact
+   content-title position (same calc, cap resolving against the title's own
+   size), while the figure keeps its vertical center — the page reads
+   anchored, the plate sits like a tipped-in print. */
+.split { flex-direction: row; align-items: center; gap: 96px; }
+.split-copy { flex: none; width: 640px; display: flex; flex-direction: column; gap: 42px; align-self: flex-start; }
+.split-copy > .slide-title { margin-top: calc(4 * var(--baseline) - 1cap - var(--pad-top)); }
+.split-copy .note { font-size: var(--type-small); line-height: var(--baseline); margin: 0; text-align: justify; hyphens: auto; hyphenate-limit-chars: 6 3 3; }
+.split-figure { flex: 1; }
+.split-figure img { width: 100%; border-radius: var(--radius-md); }
+
+/* — full-bleed image slide — */
+/* The photograph covers the stage (the slide clips it) through the same
+   four-color separation as every image (the dot screen rides on it). Type sits on the photograph over a scrim
+   built from the ground token: near-opaque at the foot where the title sits,
+   gone by mid-stage so the image stays the subject (the head echo left with
+   the kicker row — nothing sits at the head now, so the image keeps the whole
+   top of the stage). Copy pins to the bottom padding edge like the
+   cover's meta row, so its last baseline lands on the 972 gridline. */
+.bleed-figure { position: absolute; inset: 0; margin: 0; }
+.bleed-figure img { width: 100%; height: 100%; object-fit: cover; }
+.bleed-scrim {
+  pointer-events: none; /* the slot beneath is interactive — overlays must not eat its hover/drops */
+  position: absolute; inset: 0;
+  /* Stops re-derived against the measured rule (deck-templates.md, type
+     over photography): near-paper through the copy block (the note's region
+     measured 2.8:1 under the old 94→55% ramp; the title band sat at min
+     4.0), letting go above it — the newsprint page rising to meet the type. */
+  background:
+    linear-gradient(to top,
+      color-mix(in srgb, var(--color-bg) 98%, transparent),
+      color-mix(in srgb, var(--color-bg) 96%, transparent) 24%,
+      color-mix(in srgb, var(--color-bg) 58%, transparent) 42%,
+      transparent 68%);
+}
+.bleed-copy { position: absolute; left: var(--pad-x); right: var(--pad-x); bottom: var(--pad-bottom); pointer-events: none; } /* text over the slot — must not eat its hover/drop events */
+.bleed-copy .note {
+  font-size: var(--type-small); line-height: var(--baseline); max-width: 52ch;
+  margin: calc(2 * var(--baseline) - 1cap) 0 0; /* note's first baseline two gridlines below the title's */
+  text-box: trim-both cap alphabetic; /* bottom edge = last baseline, pinned to 972 */
+  text-align: justify; hyphens: auto; hyphenate-limit-chars: 6 3 3;
+  color: var(--color-text); /* full ink over photography — the muted 55% alpha
+     composites against the image and measured 3.0:1 where the rule asks 4.5
+     (deck-templates.md, type over photography); the class stays on the
+     markup for derived decks that move the note onto plain ground */
+}
+
+/* — half-bleed image slides — */
+/* The photograph takes half the 1920 stage and bleeds to its three edges; the
+   copy takes the other half on the standard content rhythm (title baseline
+   on the 4th gridline, bullets/notes below as on any content slide). Base
+   class puts the image LEFT and the copy right, one pad-x beyond the image
+   edge; add .flip to mirror (image right, copy back at the text axis).
+   Hanging marks keep hanging left of the copy either way. */
+.half-bleed { padding-top: calc(4 * var(--baseline)); } /* the content slides' headline drop — see .content */
+.half-bleed > .slide-title { margin-top: -1cap; max-width: 640px; }
+.half-bleed .note {
+  font-size: var(--type-small); line-height: var(--baseline); max-width: 640px;
+  margin: calc(3 * var(--baseline) - 1cap) 0 0; /* grew a gridline with the title's rise, holding the note's gridline */
+  text-box: trim-both cap alphabetic; /* the margin calc presupposes the trim */
+  text-align: justify; hyphens: auto; hyphenate-limit-chars: 6 3 3;
+}
+.half-bleed .bullets { margin-top: calc(4 * var(--baseline) - 1cap); max-width: 640px; }
+.half-bleed-figure { position: absolute; inset: 0 auto 0 0; width: 960px; margin: 0; }
+.half-bleed-figure img { width: 100%; height: 100%; object-fit: cover; }
+.half-bleed:not(.flip) > .slide-title { margin-left: calc(960px - 0.035em); } /* the copy column offset, preserving the optical shift */
+.half-bleed:not(.flip) .note,
+.half-bleed:not(.flip) .bullets { margin-left: 960px; }
+.half-bleed.flip .half-bleed-figure { inset: 0 0 0 auto; }
+
+/* — quote — */
+/* Top-anchored (review round 3): the quote's cap corner sits on the shared
+   anchor (the hanging “ keeps hanging left of the axis, and its ink may
+   rise above the cap line — the trim sizes the box, it doesn't clip). */
+.quote { justify-content: flex-start; padding-top: var(--cap-anchor); gap: 54px; }
+.quote .rise { display: flex; flex-direction: column; gap: 54px; }
+.quote blockquote {
+  font-family: var(--font-heading); font-weight: 400; font-style: italic; /* the serif's true italic, loaded by styles.css's ital axis — a synthesized oblique would keep the upright's advances and break the measured hang below */
+  font-size: 58px; line-height: calc(1.5 * var(--baseline)); letter-spacing: -0.01em;
+  max-width: 28ch; margin: 0;
+  text-box: trim-both cap alphabetic; /* box top = cap top = the anchor */
+  text-indent: -0.475em; /* hang the opening “ (measured advance in the italic) */
+}
+.quote figcaption { font-size: var(--type-small); margin: 0; text-indent: -1.045em; /* hang the leading em-dash + space (measured advance in the Regular) */ }
+
+/* Review aid: the baseline grid drawn as a hairline under every --baseline
+   step. Debug-only — toggled by ?baselines or the B key; not part of the look. */
+deck-stage[data-baselines] .slide::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    repeating-linear-gradient(to bottom,
+      color-mix(in srgb, var(--color-accent) 35%, transparent) 0 1px,
+      transparent 1px var(--baseline)),
+    repeating-linear-gradient(to bottom,
+      transparent 0 calc(var(--baseline) / 2),
+      color-mix(in srgb, var(--color-accent) 16%, transparent) calc(var(--baseline) / 2) calc(var(--baseline) / 2 + 1px),
+      transparent calc(var(--baseline) / 2 + 1px) var(--baseline));
+}
+
+/* Entrance — end-state is the base style; animate from hidden, gated on the
+   active slide and the motion preference, so print and reduced-motion are safe. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-deck-active] .rise { animation: rise 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); } }
+}
+
+/* ——— This deck's own additions ———————————————————————————————— */
+/* Bangla type: Source Serif 4 carries no Bengali, so Noto Serif Bengali
+   picks up those glyphs through per-glyph fallback — the English product
+   terms and every UI mockup stay in the system's own serif, and the
+   Bangla runs beside them at the same optical weight. */
+deck-stage {
+  --font-heading: 'Source Serif 4', 'Noto Serif Bengali', serif;
+  --font-body: 'Source Serif 4', 'Noto Serif Bengali', serif;
+  --page-foot-note: "Seltiv · SLMS proposal";
+}
+.slide-title, .display { line-height: 1.28; }
+.content > .lede { text-align: justify; hyphens: auto; hyphenate-limit-chars: 6 3 3; }
+.display { line-height: 1.22; }
+
+/* The lede line under a title, and the note that follows a table. */
+.content > .lede, .content > .table + .lede {
+  font-size: var(--type-small); line-height: var(--baseline); max-width: 92ch;
+  margin: calc(2 * var(--baseline) - 1cap) 0 0;
+  text-box: trim-both cap alphabetic;
+  color: color-mix(in srgb, var(--color-text) 62%, transparent);
+}
+/* These tables carry no swatch column, so the first cell takes its natural
+   measure instead of the component's 64px swatch slot. */
+.slide .table.no-swatch td:first-child { width: auto; position: static; }
+.content > .table + .lede { margin-top: calc(var(--baseline) - 1cap); }
+.quad-axis { margin-top: calc(var(--baseline) - 1cap); }
+.strike { text-decoration: line-through; color: color-mix(in srgb, var(--color-text) 45%, transparent); }
+.price-now { color: var(--color-accent-700); }
+.cols ul.mini { margin: 0; padding: 0; list-style: none; font-size: var(--type-small); }
+.cols ul.mini li { line-height: var(--baseline); text-indent: -0.538em; }
+.cols ul.mini li::before { content: "• "; }
+.cols ul.mini li + li { margin-top: 6px; }
+
+/* — UI mockups (interface in English, minimal) —
+   A screenshot-grade figure at the slide's full 1632px measure, authored at
+   projection scale: nothing inside is below 24px, so the interface reads
+   from the back of the room without any transform trickery. The one boxed
+   region the system allows here is the frame itself — it is a picture of a
+   product, not page structure. */
+.content > .ui-figure { margin: var(--baseline) 0 0; width: 1632px; height: 594px; }
+.ui { display: flex; width: 100%; height: 100%; overflow: hidden;
+  background: var(--color-neutral-100); border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md); box-shadow: var(--shadow-sm);
+  font-family: var(--font-body); font-size: 26px; color: var(--color-text); }
+.ui-side { flex: none; width: 316px; padding: 34px 32px; display: flex; flex-direction: column; gap: 30px;
+  border-right: 1px solid var(--color-divider); background: var(--color-bg); }
+.ui-brand { font-family: var(--font-heading); font-weight: var(--font-heading-weight); font-size: 30px; letter-spacing: -0.01em; }
+.ui-nav { display: flex; flex-direction: column; gap: 22px; font-size: 26px; color: color-mix(in srgb, var(--color-text) 58%, transparent); }
+.ui-nav .on { color: var(--color-accent-700); font-weight: 600; }
+.ui-main { flex: 1; min-width: 0; padding: 30px 36px; display: flex; flex-direction: column; gap: 26px; }
+.ui-top { display: flex; align-items: baseline; justify-content: space-between; gap: 28px; }
+.ui-h { font-family: var(--font-heading); font-weight: var(--font-heading-weight); font-size: 34px; margin: 0; letter-spacing: -0.01em; }
+.ui-sub { font-size: 24px; color: color-mix(in srgb, var(--color-text) 55%, transparent); }
+.ui-btn { font-size: 24px; padding: 11px 22px; border-radius: var(--radius-sm); background: var(--color-accent); color: var(--color-neutral-100); white-space: nowrap; }
+.ui-btn-q { font-size: 24px; padding: 11px 22px; border-radius: var(--radius-sm); border: 1px solid var(--color-divider); white-space: nowrap; }
+.ui-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; }
+.ui-stat-n { font-family: var(--font-heading); font-weight: var(--font-heading-weight); font-size: 50px; letter-spacing: -0.02em; }
+.ui-stat-l { font-size: 24px; margin-top: 6px; color: color-mix(in srgb, var(--color-text) 55%, transparent); }
+.ui-table { width: 100%; border-collapse: collapse; font-size: 26px; }
+.ui-table th { text-align: left; font-weight: 400; font-size: 24px; letter-spacing: 0.03em;
+  color: color-mix(in srgb, var(--color-text) 50%, transparent); padding: 0 20px 14px 0; border-bottom: 1px solid var(--color-divider); }
+.ui-table td { padding: 17px 20px 17px 0; border-bottom: 1px solid var(--color-divider); }
+.ui-table th:last-child, .ui-table td:last-child { padding-right: 0; text-align: right; }
+.ui-tag { display: inline-block; font-size: 24px; padding: 3px 14px; border-radius: var(--radius-sm);
+  background: var(--color-accent-100); color: var(--color-accent-900); }
+.ui-tag.warn { background: var(--color-accent-2-100); color: var(--color-accent-2-900); }
+.ui-tag.mute { background: var(--color-surface); color: color-mix(in srgb, var(--color-text) 60%, transparent); }
+.ui-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; }
+.ui-panel { border: 1px solid var(--color-divider); border-radius: var(--radius-md); padding: 24px 28px;
+  display: flex; flex-direction: column; gap: 16px; }
+.ui-panel-h { font-size: 24px; letter-spacing: 0.03em; color: color-mix(in srgb, var(--color-text) 50%, transparent); }
+.ui-row { display: flex; align-items: baseline; justify-content: space-between; gap: 20px; font-size: 26px; }
+.ui-row .k { color: color-mix(in srgb, var(--color-text) 58%, transparent); }
+.ui-row.total { font-family: var(--font-heading); font-weight: var(--font-heading-weight); font-size: 30px; padding-top: 14px; border-top: 1px solid var(--color-divider); }
+.ui-bars { display: flex; align-items: flex-end; gap: 26px; height: 118px; }
+.ui-bars i { flex: 1; background: var(--color-neutral-800); border-radius: var(--radius-sm) var(--radius-sm) 0 0; }
+.ui-bars i.hi { background: var(--color-accent); }
+.ui-axis { display: flex; gap: 26px; font-size: 24px; color: color-mix(in srgb, var(--color-text) 50%, transparent); }
+.ui-axis span { flex: 1; text-align: center; }
+.ui-check { display: flex; align-items: center; justify-content: space-between; gap: 20px; font-size: 26px; }
+.ui-marks { display: flex; gap: 10px; }
+.ui-marks i { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--color-divider); }
+.ui-marks i.p { background: var(--color-accent); border-color: var(--color-accent); }
+.ui-marks i.a { background: var(--color-accent-2); border-color: var(--color-accent-2); }
+.ui-foot { display: flex; gap: 34px; font-size: 24px; color: color-mix(in srgb, var(--color-text) 55%, transparent); margin-top: auto; }
+
+/* ——— Color on the sheet ———————————————————————————————————————
+   The process inks carry the structure instead of decorating every page:
+   the section dividers and the plate figure sit on the cyan tint, the cover
+   and close on the magenta one, and the working slides take a soft wash of
+   the same two tints off one corner — ink coming up to density at the edge
+   of the sheet, as on the dividers' halftone field. Every value is a ramp
+   step from the system's own tokens. */
+.slide.content {
+  background:
+    radial-gradient(130% 95% at 100% 0%,
+      var(--color-accent-200) 0%,
+      color-mix(in srgb, var(--color-accent-200) 52%, var(--color-bg)) 30%,
+      var(--color-bg) 66%);
+}
+.slide.content.warm {
+  background:
+    radial-gradient(130% 95% at 100% 0%,
+      var(--color-accent-2-200) 0%,
+      color-mix(in srgb, var(--color-accent-2-200) 52%, var(--color-bg)) 30%,
+      var(--color-bg) 66%);
+}
+.slide.divider, .slide.hero { background: var(--color-accent-100); }
+/* The plate numeral carries its own backdrop for the multiply plates — on a
+   tinted sheet that backdrop is the tint, not paper, or it prints as a
+   white patch. */
+.slide.divider .cmyk-num, .slide.hero .cmyk-num { --cmyk-num-ground: var(--color-accent-100); }
+.slide.cover {
+  background:
+    linear-gradient(158deg,
+      var(--color-accent-2-100) 0%,
+      color-mix(in srgb, var(--color-accent-2-100) 40%, var(--color-bg)) 26%,
+      var(--color-bg) 52%,
+      color-mix(in srgb, var(--color-accent-100) 55%, var(--color-bg)) 84%,
+      var(--color-accent-100) 100%);
+}
+.slide.cover .cmyk-num { --cmyk-num-ground: transparent; }
+</style>
+</helmet>
+
+<x-import component-from-global-scope="deck-stage" from="./deck-stage.js" width="1920" height="1080" hint-size="100%,100%">
+
+  <section class="slide cover" data-label="Cover" data-screen-label="01">
+    <div class="rise">
+      <h1 class="display">Student Lifecycle Management System</h1>
+      <p class="cover-sub text-muted">A proposal for the four schools of the Sheikh Farid Ahmed Education and Welfare Trust — one platform for admissions, attendance, academics, finance and parent communication.</p>
+    </div>
+    <div class="pin-bottom meta"><span>Seltiv</span><span>·</span><span>Prepared for Sheikh Farid Ahmed</span><span>·</span><span>August 2026</span></div>
+    <div class="color-bar" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide content" data-label="Contents" data-screen-label="02">
+    <h2 class="slide-title">Contents</h2>
+    <div class="toc rise">
+      <div class="toc-row"><span class="toc-num">01</span><span>Where things stand today</span></div>
+      <div class="toc-row"><span class="toc-num">02</span><span>How the system is built</span></div>
+      <div class="toc-row"><span class="toc-num">03</span><span>The screens</span></div>
+      <div class="toc-row"><span class="toc-num">04</span><span>Rollout and investment</span></div>
+    </div>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide divider" data-label="Where things stand today" data-screen-label="01">
+    <div class="press-field" aria-hidden="true"><i class="pf-y"></i><i class="pf-c"></i><i class="pf-m"></i></div>
+    <div class="scale-color" aria-hidden="true"><i class="sc-c"></i><i class="sc-m"></i><i class="sc-y"></i><i class="sc-cm"></i><i class="sc-my"></i><i class="sc-cy"></i><i class="sc-cmy"></i><i class="sc-k"></i></div>
+    <div class="scale-bw" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <i class="star-target" aria-hidden="true"></i>
+    <div class="rise">
+      <h2 class="slide-title">Where things stand today</h2>
+      <div class="ghost-num cmyk-num"><span class="paper">01</span><span class="plate plate-c" aria-hidden="true">01</span><span class="plate plate-m" aria-hidden="true">01</span><span class="plate plate-y" aria-hidden="true">01</span></div>
+    </div>
+  </section>
+
+  <section class="slide content" data-label="Open questions" data-screen-label="04">
+    <h2 class="slide-title">Questions that are hard to answer today</h2>
+    <div class="cols cols-3 rise">
+      <div>
+        <h3>One student's progress</h3>
+        <p>Results, attendance and fees live in separate registers, so no single view shows how one student is doing across three terms. A child who starts slipping is noticed late, when the term report finally arrives.</p>
+      </div>
+      <div>
+        <h3>The real attendance picture</h3>
+        <p>Attendance is recorded on paper and summarised much later. Which class is drifting, and which student is repeatedly absent, is not visible until the month has closed and the pattern is already set.</p>
+      </div>
+      <div>
+        <h3>Where fee collection stands</h3>
+        <p>Each school keeps its own ledger of who has paid and who is behind. Building one collection figure for the trust means asking four offices and reconciling the answers by hand.</p>
+      </div>
+    </div>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide hero" data-label="Four schools, one system" data-screen-label="05">
+    <div class="hero-num cmyk-num rise"><span class="paper">4</span><span class="plate plate-c" aria-hidden="true">4</span><span class="plate plate-m" aria-hidden="true">4</span><span class="plate plate-y" aria-hidden="true">4</span></div>
+    <p class="hero-caption text-muted">Four schools on one system. Every student, teacher, attendance record and fee sits in the same database — each school keeps its own reports, and the trust gets a single consolidated dashboard across all four.</p>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide divider" data-label="How the system is built" data-screen-label="02">
+    <div class="press-field" aria-hidden="true"><i class="pf-y"></i><i class="pf-c"></i><i class="pf-m"></i></div>
+    <div class="scale-color" aria-hidden="true"><i class="sc-c"></i><i class="sc-m"></i><i class="sc-y"></i><i class="sc-cm"></i><i class="sc-my"></i><i class="sc-cy"></i><i class="sc-cmy"></i><i class="sc-k"></i></div>
+    <div class="scale-bw" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <i class="star-target" aria-hidden="true"></i>
+    <div class="rise">
+      <h2 class="slide-title">How the system is built</h2>
+      <div class="ghost-num cmyk-num"><span class="paper">02</span><span class="plate plate-c" aria-hidden="true">02</span><span class="plate plate-m" aria-hidden="true">02</span><span class="plate plate-y" aria-hidden="true">02</span></div>
+    </div>
+  </section>
+
+  <section class="slide content" data-label="Four portals" data-screen-label="07">
+    <h2 class="slide-title">Four portals, one database</h2>
+    <div class="quad rise">
+      <div>
+        <h3>Admin Portal</h3>
+        <p>Admissions and enrolment, notices, exam schedules, gradesheet publishing, roles and permissions, and the analytics dashboard.</p>
+      </div>
+      <div>
+        <h3>Teacher Portal</h3>
+        <p>Class roll call, gradesheet upload and the timetable. Teacher attendance itself is taken on fingerprint or ID card.</p>
+      </div>
+      <div>
+        <h3>Parent Portal</h3>
+        <p>The child's profile, results, attendance, notices and certificates, plus tuition payment through bKash.</p>
+      </div>
+      <div>
+        <h3>Accounts Portal</h3>
+        <p>Fee collection and dues, instalments and reminders, staff salary and payslips, bKash reconciliation.</p>
+      </div>
+    </div>
+    <div class="quad-axis" aria-hidden="true"><span>institution side</span><span>parent side</span></div>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide divider" data-label="The screens" data-screen-label="03">
+    <div class="press-field" aria-hidden="true"><i class="pf-y"></i><i class="pf-c"></i><i class="pf-m"></i></div>
+    <div class="scale-color" aria-hidden="true"><i class="sc-c"></i><i class="sc-m"></i><i class="sc-y"></i><i class="sc-cm"></i><i class="sc-my"></i><i class="sc-cy"></i><i class="sc-cmy"></i><i class="sc-k"></i></div>
+    <div class="scale-bw" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <i class="star-target" aria-hidden="true"></i>
+    <div class="rise">
+      <h2 class="slide-title">The screens</h2>
+      <div class="ghost-num cmyk-num"><span class="paper">03</span><span class="plate plate-c" aria-hidden="true">03</span><span class="plate plate-m" aria-hidden="true">03</span><span class="plate plate-y" aria-hidden="true">03</span></div>
+    </div>
+  </section>
+
+
+  <section class="slide content" data-label="Admin — Analytics Dashboard" data-screen-label="Admin — Analytics Dashboard">
+    <h2 class="slide-title">Admin — Analytics Dashboard</h2>
+    <p class="lede">Attendance, fee collection and pass rate across all four schools on one page, with any single school viewable on its own.</p>
+    <figure class="ui-figure rise">
+      <div class="ui">
+      <div class="ui-side">
+        <div class="ui-brand">Seltiv SLMS</div>
+        <div class="ui-nav">
+          <span class="on">Dashboard</span>
+          <span class="">Admissions</span>
+          <span class="">Students</span>
+          <span class="">Attendance</span>
+          <span class="">Exams &amp; Grades</span>
+          <span class="">Finance</span>
+          <span class="">Notices</span>
+          <span class="">Service Requests</span>
+        </div>
+      </div>
+      <div class="ui-main">
+        <div class="ui-top">
+          <div>
+            <div class="ui-h">Trust Overview</div>
+            <div class="ui-sub">August 2026</div>
+          </div>
+          <div class="ui-btn-q">All 4 Schools</div>
+        </div>
+        <div class="ui-stats">
+          <div><div class="ui-stat-n">3,412</div><div class="ui-stat-l">Students enrolled</div></div>
+          <div><div class="ui-stat-n">94.2%</div><div class="ui-stat-l">Attendance today</div></div>
+          <div><div class="ui-stat-n">78%</div><div class="ui-stat-l">Fees collected</div></div>
+          <div><div class="ui-stat-n">91%</div><div class="ui-stat-l">Pass rate, last term</div></div>
+        </div>
+        <div class="ui-panel">
+          <div class="ui-panel-h">Fee collection rate — last six months</div>
+          <div class="ui-bars"><i style="height: 58%"></i><i style="height: 66%"></i><i style="height: 61%"></i><i style="height: 74%"></i><i style="height: 71%"></i><i class="hi" style="height: 88%"></i></div>
+          <div class="ui-axis"><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span></div>
+        </div>
+      </div>
+      </div>
+    </figure>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+
+  <section class="slide content" data-label="Admin — Student Profile" data-screen-label="Admin — Student Profile">
+    <h2 class="slide-title">Admin — Student Profile</h2>
+    <p class="lede">One student’s results, attendance and fee status on a single page — the view that is missing today.</p>
+    <figure class="ui-figure rise">
+      <div class="ui">
+      <div class="ui-side">
+        <div class="ui-brand">Seltiv SLMS</div>
+        <div class="ui-nav">
+          <span class="">Dashboard</span>
+          <span class="">Admissions</span>
+          <span class="on">Students</span>
+          <span class="">Attendance</span>
+          <span class="">Exams &amp; Grades</span>
+          <span class="">Finance</span>
+          <span class="">Notices</span>
+          <span class="">Service Requests</span>
+        </div>
+      </div>
+      <div class="ui-main">
+        <div class="ui-top">
+          <div>
+            <div class="ui-h">Nabila Rahman</div>
+            <div class="ui-sub">Class 8B · Roll 14 · Sheikh Farid High School</div>
+          </div>
+          <div class="ui-btn-q">Download Report</div>
+        </div>
+        <div class="ui-cols">
+          <div class="ui-panel">
+            <div class="ui-panel-h">Academic progress</div>
+            <div class="ui-row"><span class="k">Term 1 GPA</span><span>4.42</span></div>
+            <div class="ui-row"><span class="k">Term 2 GPA</span><span>4.61</span></div>
+            <div class="ui-row"><span class="k">Term 3 GPA</span><span>4.78</span></div>
+            <div class="ui-row"><span class="k">Class position</span><span>6 of 58</span></div>
+          </div>
+          <div class="ui-panel">
+            <div class="ui-panel-h">Attendance &amp; fees</div>
+            <div class="ui-row"><span class="k">Present</span><span>182 of 195 days</span></div>
+            <div class="ui-row"><span class="k">Absent · Late</span><span>9 · 4</span></div>
+            <div class="ui-row"><span class="k">Fees</span><span class="ui-tag">Paid to August</span></div>
+            <div class="ui-row"><span class="k">Outstanding</span><span>৳0</span></div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </figure>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+
+  <section class="slide content" data-label="Teacher — Attendance" data-screen-label="Teacher — Attendance">
+    <h2 class="slide-title">Teacher — Attendance</h2>
+    <p class="lede">The teacher marks roll call in class; the record reaches the dashboard and the parents the same minute.</p>
+    <figure class="ui-figure rise">
+      <div class="ui">
+      <div class="ui-side">
+        <div class="ui-brand">Teacher Portal</div>
+        <div class="ui-nav">
+          <span class="">My Classes</span>
+          <span class="on">Attendance</span>
+          <span class="">Gradesheet</span>
+          <span class="">Class Schedule</span>
+        </div>
+      </div>
+      <div class="ui-main">
+        <div class="ui-top">
+          <div>
+            <div class="ui-h">Attendance — Class 8B</div>
+            <div class="ui-sub">31 August 2026 · Period 1</div>
+          </div>
+          <div class="ui-btn">Save Roll Call</div>
+        </div>
+        <div class="ui-cols">
+          <div class="ui-panel">
+            <div class="ui-check"><span>14 · Nabila Rahman</span><span class="ui-marks"><i class="p"></i><i></i></span></div>
+            <div class="ui-check"><span>15 · Tanvir Hasan</span><span class="ui-marks"><i class="p"></i><i></i></span></div>
+            <div class="ui-check"><span>16 · Sumaiya Akter</span><span class="ui-marks"><i></i><i class="a"></i></span></div>
+          </div>
+          <div class="ui-panel">
+            <div class="ui-check"><span>17 · Rakib Islam</span><span class="ui-marks"><i class="p"></i><i></i></span></div>
+            <div class="ui-check"><span>18 · Mehjabin Nur</span><span class="ui-marks"><i class="p"></i><i></i></span></div>
+            <div class="ui-check"><span>19 · Sabbir Ahmed</span><span class="ui-marks"><i class="p"></i><i></i></span></div>
+          </div>
+        </div>
+        <div class="ui-foot"><span>Present 28</span><span>Absent 2</span><span>Late 1</span><span>SMS alert to absent students' parents</span></div>
+      </div>
+      </div>
+    </figure>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+
+  <section class="slide content" data-label="Parent — Child Profile" data-screen-label="Parent — Child Profile">
+    <h2 class="slide-title">Parent — Child Profile</h2>
+    <p class="lede">Parents can see their own child’s results, attendance and notices at any time, without calling the office.</p>
+    <figure class="ui-figure rise">
+      <div class="ui">
+      <div class="ui-side">
+        <div class="ui-brand">Parent Portal</div>
+        <div class="ui-nav">
+          <span class="on">My Child</span>
+          <span class="">Gradesheet</span>
+          <span class="">Attendance</span>
+          <span class="">Fees &amp; Payment</span>
+          <span class="">Notices</span>
+          <span class="">Service Requests</span>
+        </div>
+      </div>
+      <div class="ui-main">
+        <div class="ui-top">
+          <div>
+            <div class="ui-h">Nabila Rahman</div>
+            <div class="ui-sub">Class 8B · Roll 14</div>
+          </div>
+          <div class="ui-btn-q">Download Certificate</div>
+        </div>
+        <div class="ui-cols">
+          <div class="ui-panel">
+            <div class="ui-panel-h">Latest gradesheet — Term 3</div>
+            <div class="ui-row"><span class="k">Bangla</span><span>88</span></div>
+            <div class="ui-row"><span class="k">English</span><span>82</span></div>
+            <div class="ui-row"><span class="k">Mathematics</span><span>94</span></div>
+            <div class="ui-row"><span class="k">Science</span><span>90</span></div>
+          </div>
+          <div class="ui-panel">
+            <div class="ui-panel-h">This month</div>
+            <div class="ui-row"><span class="k">Attendance</span><span>96%</span></div>
+            <div class="ui-row"><span class="k">Next fee due</span><span>5 September</span></div>
+            <div class="ui-row"><span class="k">New notices</span><span class="ui-tag">2 unread</span></div>
+            <div class="ui-row"><span class="k">Exam schedule</span><span>Published</span></div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </figure>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+
+  <section class="slide content" data-label="Parent — Fee Payment (bKash)" data-screen-label="Parent — Fee Payment (bKash)">
+    <h2 class="slide-title">Parent — Fee Payment (bKash)</h2>
+    <p class="lede">Fees are paid through bKash, the receipt is issued immediately, and the accounts office sees the transaction already reconciled.</p>
+    <figure class="ui-figure rise">
+      <div class="ui">
+      <div class="ui-side">
+        <div class="ui-brand">Parent Portal</div>
+        <div class="ui-nav">
+          <span class="">My Child</span>
+          <span class="">Gradesheet</span>
+          <span class="">Attendance</span>
+          <span class="on">Fees &amp; Payment</span>
+          <span class="">Notices</span>
+          <span class="">Service Requests</span>
+        </div>
+      </div>
+      <div class="ui-main">
+        <div class="ui-top">
+          <div>
+            <div class="ui-h">Tuition Fee — September 2026</div>
+            <div class="ui-sub">Invoice INV-2026-09-0142</div>
+          </div>
+          <div class="ui-tag warn">Due 5 September</div>
+        </div>
+        <div class="ui-cols">
+          <div class="ui-panel">
+            <div class="ui-row"><span class="k">Monthly tuition</span><span>৳2,500</span></div>
+            <div class="ui-row"><span class="k">Exam fee</span><span>৳500</span></div>
+            <div class="ui-row"><span class="k">Late fee</span><span>৳0</span></div>
+            <div class="ui-row total"><span>Total payable</span><span>৳3,000</span></div>
+          </div>
+          <div class="ui-panel">
+            <div class="ui-panel-h">Payment method</div>
+            <div class="ui-check"><span>bKash</span><span class="ui-marks"><i class="p"></i></span></div>
+            <div class="ui-check"><span>Pay in 2 instalments</span><span class="ui-marks"><i></i></span></div>
+            <div class="ui-row"><span class="k">Receipt</span><span>Auto-generated</span></div>
+            <div class="ui-btn">Pay with bKash</div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </figure>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+
+  <section class="slide content" data-label="Accounts — Payroll &amp; Payslip" data-screen-label="Accounts — Payroll &amp; Payslip">
+    <h2 class="slide-title">Accounts — Payroll &amp; Payslip</h2>
+    <p class="lede">Staff salary processing and payslip generation in one place — payslips belong to staff, not to students.</p>
+    <figure class="ui-figure rise">
+      <div class="ui">
+      <div class="ui-side">
+        <div class="ui-brand">Accounts Portal</div>
+        <div class="ui-nav">
+          <span class="">Fee Collection</span>
+          <span class="on">Payroll</span>
+          <span class="">bKash Reconciliation</span>
+          <span class="">Reports</span>
+        </div>
+      </div>
+      <div class="ui-main">
+        <div class="ui-top">
+          <div>
+            <div class="ui-h">Payroll — August 2026</div>
+            <div class="ui-sub">4 schools · 118 staff</div>
+          </div>
+          <div class="ui-btn">Generate Payslips</div>
+        </div>
+        <table class="ui-table">
+          <thead><tr><th>Staff</th><th>Role</th><th>Gross</th><th>Net</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Md. Alamgir Hossain</td><td>Senior Teacher</td><td>৳38,000</td><td>৳36,100</td><td><span class="ui-tag">Paid</span></td></tr>
+            <tr><td>Farhana Yasmin</td><td>Teacher</td><td>৳29,500</td><td>৳28,000</td><td><span class="ui-tag">Paid</span></td></tr>
+            <tr><td>Jahangir Alam</td><td>Accountant</td><td>৳26,000</td><td>৳24,700</td><td><span class="ui-tag warn">Pending</span></td></tr>
+            <tr><td>Shirin Sultana</td><td>Office Assistant</td><td>৳18,000</td><td>৳17,300</td><td><span class="ui-tag mute">Draft</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      </div>
+    </figure>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+
+  <section class="slide content" data-label="Admin — Notices &amp; SMS" data-screen-label="Admin — Notices &amp; SMS">
+    <h2 class="slide-title">Admin — Notices &amp; SMS</h2>
+    <p class="lede">A notice is written once: it publishes to the portal and goes out by SMS to the selected parents.</p>
+    <figure class="ui-figure rise">
+      <div class="ui">
+      <div class="ui-side">
+        <div class="ui-brand">Seltiv SLMS</div>
+        <div class="ui-nav">
+          <span class="">Dashboard</span>
+          <span class="">Admissions</span>
+          <span class="">Students</span>
+          <span class="">Attendance</span>
+          <span class="">Exams &amp; Grades</span>
+          <span class="">Finance</span>
+          <span class="on">Notices</span>
+          <span class="">Service Requests</span>
+        </div>
+      </div>
+      <div class="ui-main">
+        <div class="ui-top">
+          <div>
+            <div class="ui-h">New Notice</div>
+            <div class="ui-sub">Draft · not yet published</div>
+          </div>
+          <div class="ui-btn">Publish &amp; Send SMS</div>
+        </div>
+        <div class="ui-panel">
+          <div class="ui-row"><span class="k">Title</span><span>Half-yearly exam routine published</span></div>
+          <div class="ui-row"><span class="k">Audience</span><span>All parents · Class 6 to 10</span></div>
+          <div class="ui-row"><span class="k">Channels</span><span>Portal + SMS</span></div>
+        </div>
+        <table class="ui-table">
+          <thead><tr><th>Recent notices</th><th>Sent</th><th>Delivered</th></tr></thead>
+          <tbody>
+            <tr><td>Tuition fee reminder — August</td><td>1,204 SMS</td><td>1,189</td></tr>
+            <tr><td>School closed on 21 August</td><td>3,412 SMS</td><td>3,377</td></tr>
+          </tbody>
+        </table>
+      </div>
+      </div>
+    </figure>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+
+  <section class="slide content" data-label="Admin — Admission &amp; Enrollment" data-screen-label="Admin — Admission &amp; Enrollment">
+    <h2 class="slide-title">Admin — Admission &amp; Enrollment</h2>
+    <p class="lede">From the online application form through entrance test, document verification and seat confirmation — one tracked process.</p>
+    <figure class="ui-figure rise">
+      <div class="ui">
+      <div class="ui-side">
+        <div class="ui-brand">Seltiv SLMS</div>
+        <div class="ui-nav">
+          <span class="">Dashboard</span>
+          <span class="on">Admissions</span>
+          <span class="">Students</span>
+          <span class="">Attendance</span>
+          <span class="">Exams &amp; Grades</span>
+          <span class="">Finance</span>
+          <span class="">Notices</span>
+          <span class="">Service Requests</span>
+        </div>
+      </div>
+      <div class="ui-main">
+        <div class="ui-top">
+          <div>
+            <div class="ui-h">Admission 2027</div>
+            <div class="ui-sub">Applications open until 30 September</div>
+          </div>
+          <div class="ui-btn-q">Schedule Entrance Test</div>
+        </div>
+        <div class="ui-stats">
+          <div><div class="ui-stat-n">412</div><div class="ui-stat-l">Applications</div></div>
+          <div><div class="ui-stat-n">380</div><div class="ui-stat-l">Test scheduled</div></div>
+          <div><div class="ui-stat-n">120</div><div class="ui-stat-l">Seats available</div></div>
+          <div><div class="ui-stat-n">96</div><div class="ui-stat-l">Enrolment confirmed</div></div>
+        </div>
+        <table class="ui-table">
+          <thead><tr><th>Applicant</th><th>Class</th><th>Documents</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Ayaan Chowdhury</td><td>Class 6</td><td>Verified</td><td><span class="ui-tag">Seat offered</span></td></tr>
+            <tr><td>Rifat Jahan</td><td>Class 9</td><td>2 pending</td><td><span class="ui-tag warn">Awaiting documents</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      </div>
+    </figure>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+
+  <section class="slide content" data-label="Parent — Service Requests" data-screen-label="Parent — Service Requests">
+    <h2 class="slide-title">Parent — Service Requests</h2>
+    <p class="lede">Transfer certificates and testimonials are requested online and tracked all the way to approval.</p>
+    <figure class="ui-figure rise">
+      <div class="ui">
+      <div class="ui-side">
+        <div class="ui-brand">Parent Portal</div>
+        <div class="ui-nav">
+          <span class="">My Child</span>
+          <span class="">Gradesheet</span>
+          <span class="">Attendance</span>
+          <span class="">Fees &amp; Payment</span>
+          <span class="">Notices</span>
+          <span class="on">Service Requests</span>
+        </div>
+      </div>
+      <div class="ui-main">
+        <div class="ui-top">
+          <div>
+            <div class="ui-h">Service Requests</div>
+            <div class="ui-sub">Nabila Rahman · Class 8B</div>
+          </div>
+          <div class="ui-btn">New Request</div>
+        </div>
+        <table class="ui-table">
+          <thead><tr><th>Request</th><th>Submitted</th><th>Stage</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Transfer Certificate</td><td>18 August</td><td>Head teacher approval</td><td><span class="ui-tag warn">In review</span></td></tr>
+            <tr><td>Testimonial</td><td>4 August</td><td>Issued</td><td><span class="ui-tag">Ready to download</span></td></tr>
+            <tr><td>Duplicate ID card</td><td>29 July</td><td>Collected from office</td><td><span class="ui-tag mute">Closed</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      </div>
+    </figure>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+
+  <section class="slide divider" data-label="Rollout and investment" data-screen-label="04">
+    <div class="press-field" aria-hidden="true"><i class="pf-y"></i><i class="pf-c"></i><i class="pf-m"></i></div>
+    <div class="scale-color" aria-hidden="true"><i class="sc-c"></i><i class="sc-m"></i><i class="sc-y"></i><i class="sc-cm"></i><i class="sc-my"></i><i class="sc-cy"></i><i class="sc-cmy"></i><i class="sc-k"></i></div>
+    <div class="scale-bw" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <i class="star-target" aria-hidden="true"></i>
+    <div class="rise">
+      <h2 class="slide-title">Rollout and investment</h2>
+      <div class="ghost-num cmyk-num"><span class="paper">04</span><span class="plate plate-c" aria-hidden="true">04</span><span class="plate plate-m" aria-hidden="true">04</span><span class="plate plate-y" aria-hidden="true">04</span></div>
+    </div>
+  </section>
+
+  <section class="slide content" data-label="Integrations" data-screen-label="18">
+    <h2 class="slide-title">Integrations and access control</h2>
+    <table class="table no-swatch rise">
+      <thead>
+        <tr><th>Integration</th><th>What it covers</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Payment gateway</td><td>bKash for tuition collection, reconciled into Accounts</td></tr>
+        <tr><td>SMS gateway</td><td>Notices, fee reminders and absence alerts</td></tr>
+        <tr><td>Biometric / RFID</td><td>Mandatory for teachers, optional for students</td></tr>
+        <tr><td>Access control</td><td>Role-based permissions with an audit log</td></tr>
+      </tbody>
+    </table>
+    <p class="lede">Every grade edit, fee change and user-permission change is stored with who made it and when, so a sensitive correction can always be traced back.</p>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide content" data-label="Optional and future modules" data-screen-label="19">
+    <h2 class="slide-title">Optional and future modules</h2>
+    <div class="cols cols-2 rise">
+      <div>
+        <h3>Available now, optional in Phase 1</h3>
+        <ul class="mini">
+          <li>Online Exam &amp; Question Bank — MCQ tests, auto-grading, a reusable question bank, seat plans and invigilation duty</li>
+          <li>Transport Management — bus routes, live GPS for parents, driver and attendant records</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Phase 2, for later consideration</h3>
+        <ul class="mini">
+          <li>Library management</li>
+          <li>HR module — leave, increments, provident fund, staff appraisal</li>
+          <li>LMS — assignments, recorded lectures, online class links</li>
+          <li>WhatsApp notifications, visitor and gate management, alumni portal</li>
+          <li>Bangla / English language toggle and offline-first mode</li>
+        </ul>
+      </div>
+    </div>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide content warm" data-label="Investment" data-screen-label="20">
+    <h2 class="slide-title">Investment</h2>
+    <table class="table no-swatch rise">
+      <thead>
+        <tr><th>Item</th><th>List price</th><th>Proposed for the trust</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Onboarding — one time</td><td><span class="strike">৳1,50,000 × 4 schools = ৳6,00,000</span></td><td><span class="price-now">৳1,50,000 for all four schools</span></td></tr>
+        <tr><td>Subscription — monthly</td><td><span class="strike">৳40,000 per month</span></td><td><span class="price-now">৳20,000 per month, all schools</span></td></tr>
+      </tbody>
+    </table>
+    <p class="lede">The price covers all four portals, data migration, staff training, hosting and ongoing support. Biometric hardware and the SMS package are quoted separately.</p>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide content" data-label="Rollout plan" data-screen-label="21">
+    <h2 class="slide-title">Rollout plan</h2>
+    <figure class="rise">
+      <svg class="chart" viewBox="0 0 1632 270" role="img" aria-label="Five-step rollout from agreement in September to ongoing support in January">
+      <defs>
+        <g id="tl-target">
+          <path style="fill: var(--color-accent)" d="M0,0 L-10.5,0 A10.5,10.5 0 0 1 0,-10.5 Z"></path>
+          <path style="fill: var(--color-accent-2)" d="M0,0 L0,-10.5 A10.5,10.5 0 0 1 10.5,0 Z"></path>
+          <path style="fill: var(--color-text)" d="M0,0 L10.5,0 A10.5,10.5 0 0 1 0,10.5 Z"></path>
+          <path style="fill: var(--color-process-yellow)" d="M0,0 L0,10.5 A10.5,10.5 0 0 1 -10.5,0 Z"></path>
+          <line x1="-18" y1="0" x2="18" y2="0" stroke="currentColor" stroke-width="1"></line>
+          <line x1="0" y1="-18" x2="0" y2="18" stroke="currentColor" stroke-width="1"></line>
+        </g>
+      </defs>
+      <line class="tl-line" x1="0" y1="108" x2="1632" y2="108"></line>
+      <text class="tl-date-hi" x="0" y="72">SEP</text>
+      <text class="tl-date" x="350" y="72">OCT</text>
+      <text class="tl-date" x="700" y="72">NOV</text>
+      <text class="tl-date" x="1050" y="72">DEC</text>
+      <text class="tl-date" x="1400" y="72">JAN</text>
+      <use class="tl-node-hi" href="#tl-target" x="10.5" y="108"></use>
+      <use class="tl-node" href="#tl-target" x="360.5" y="108"></use>
+      <use class="tl-node" href="#tl-target" x="710.5" y="108"></use>
+      <use class="tl-node" href="#tl-target" x="1060.5" y="108"></use>
+      <use class="tl-node" href="#tl-target" x="1410.5" y="108"></use>
+      <text class="tl-label" x="0" y="174">Agreement</text>
+      <text class="tl-label" x="350" y="174">Data migration</text>
+      <text class="tl-label" x="700" y="174">Pilot</text>
+      <text class="tl-label" x="1050" y="174">Four-school launch</text>
+      <text class="tl-label" x="1400" y="174">Support</text>
+      <text x="0" y="243">scope signed off</text>
+      <text x="350" y="243">students and fees</text>
+      <text x="700" y="243">one school first</text>
+      <text x="1050" y="243">with staff training</text>
+      <text x="1400" y="243">ongoing maintenance</text>
+      </svg>
+    </figure>
+    <p class="chart-caption text-muted">One school runs the pilot so teachers and parents settle into the system first; the remaining three follow in stages, each with its own training week.</p>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide content warm" data-label="Next steps" data-screen-label="22">
+    <h2 class="slide-title">Next steps</h2>
+    <ul class="bullets rise">
+      <li>Sign off on the Phase 1 feature list</li>
+      <li>Choose the biometric hardware for teacher attendance</li>
+      <li>Share the bKash merchant account details for the gateway</li>
+      <li>Revisit the optional modules — Online Exam and Transport — in a follow-up</li>
+    </ul>
+    <div class="page-foot" aria-hidden="true"></div>
+  </section>
+
+  <section class="slide cover" data-label="Close" data-screen-label="23">
+    <div class="rise">
+      <h2 class="display">Thank you</h2>
+      <p class="cover-sub text-muted">Seltiv builds software for education institutions. Questions and corrections are welcome — we will revise the scope with you before quoting the final timeline.</p>
+    </div>
+    <div class="pin-bottom meta"><span>Seltiv</span><span>·</span><span>hello@seltiv.com</span></div>
+    <div class="color-bar" aria-hidden="true"></div>
+  </section>
+
+</x-import>
+</x-dc>
