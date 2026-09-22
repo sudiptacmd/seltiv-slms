@@ -1,0 +1,2 @@
+Introducing Seltiv SLMS: one platform for admissions, attendance, academics, finance, and parent communication — reproducible for any school running more than one branch.
+Built with Next.js, MongoDB, and NextAuth — each branch running its own process, its own database.

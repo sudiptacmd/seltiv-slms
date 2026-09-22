@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>Seltiv SLMS — Brag (detailed)</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        width: 1920px; height: 1080px; overflow: hidden; background: #faf9f5;
+      }
+      #root {
+        position: relative; width: 100%; height: 100%; overflow: hidden;
+        background: #faf9f5; font-family: Georgia, "Times New Roman", serif; color: #201e1d;
+      }
+      .clip { background: #faf9f5; }
+
+      /* ---- Hook / outro wordmark scenes ---- */
+      .wordmark-content {
+        position: absolute; inset: 0; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; text-align: center; gap: 26px;
+      }
+      #s1-title {
+        font-family: Georgia, "Times New Roman", serif; font-size: 140px; font-weight: 700;
+        letter-spacing: -0.01em; color: #201e1d;
+      }
+      #s1-tagline {
+        font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-size: 42px; font-weight: 500; color: #201e1d;
+      }
+      #s8-content { padding: 0 260px; }
+      #s8-title {
+        font-family: Georgia, "Times New Roman", serif; font-size: 100px; font-weight: 700;
+        letter-spacing: -0.01em; color: #201e1d;
+      }
+      #s8-tagline {
+        font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-size: 34px; font-weight: 500; color: #201e1d; line-height: 1.4;
+      }
+
+      /* ---- Sign-in scene ---- */
+      .screen-content {
+        position: absolute; inset: 0; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; gap: 44px;
+      }
+      .screen-caption {
+        font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-size: 46px; font-weight: 600; color: #201e1d; text-align: center; max-width: 1400px;
+      }
+      .portal-tag {
+        font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-size: 26px; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase;
+        padding: 8px 22px; border-radius: 30px; margin-bottom: 4px;
+      }
+      .portal-tag.office { background: #fff8df; color: #8a6a00; }
+      .portal-tag.teacher { background: #e9f8ff; color: #006786; }
+      .portal-tag.parents { background: #fff1f4; color: #aa0b56; }
+      .portal-tag.accounts { background: #f3f2f2; color: #6b6866; }
+
+      .screen-card {
+        position: relative; width: 1360px; aspect-ratio: 1440 / 900; border-radius: 14px;
+        overflow: hidden; background: #ffffff;
+        box-shadow: 0 24px 64px rgba(32, 30, 29, 0.22), 0 4px 12px rgba(32, 30, 29, 0.1);
+        border: 1px solid #e2e0da;
+      }
+      .chrome-bar {
+        position: absolute; top: 0; left: 0; right: 0; height: 34px; background: #f3f2f2;
+        border-bottom: 1px solid #e2e0da; display: flex; align-items: center; gap: 8px;
+        padding: 0 16px; z-index: 3;
+      }
+      .chrome-dot { width: 11px; height: 11px; border-radius: 50%; }
+      .chrome-dot.r { background: #d6006c; }
+      .chrome-dot.y { background: #edbb00; }
+      .chrome-dot.g { background: #1a7f4b; }
+      .screen-frame { position: absolute; top: 34px; left: 0; right: 0; bottom: 0; overflow: hidden; }
+      .screen-img {
+        position: absolute; inset: 0; display: block; width: 100%; height: 100%;
+        object-fit: cover; object-position: top center; transform-origin: 50% 20%;
+      }
+
+      /* ---- Architecture scene ---- */
+      #s7-content {
+        position: absolute; inset: 0; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; gap: 54px;
+      }
+      #s7-caption {
+        font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-size: 42px; font-weight: 600; color: #201e1d; text-align: center; max-width: 1300px;
+      }
+      .branch-row { display: flex; gap: 26px; }
+      .branch-card {
+        width: 240px; height: 170px; border: 2px dashed #cfccc4; border-radius: 10px;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 10px; background: #ffffff;
+        font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      }
+      .branch-card .num {
+        font-family: Georgia, "Times New Roman", serif; font-size: 34px; font-weight: 700; color: #0088b0;
+      }
+      .branch-card .label { font-size: 22px; color: #6b6866; text-align: center; line-height: 1.4; }
+      .branch-card.plus { border-style: solid; border-color: #e2e0da; }
+      .branch-card.plus .num { font-size: 54px; color: #cfccc4; }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="seltiv-brag-detailed"
+      data-start="0"
+      data-width="1920"
+      data-height="1080"
+      data-duration="45"
+      data-fps="30"
+    >
+      <!-- Scene 1: Hook (0 - 3.5) -->
+      <section id="s1" class="clip" data-start="0" data-duration="3.5" data-track-index="0">
+        <div id="s1-content" class="wordmark-content">
+          <h1 id="s1-title">Seltiv SLMS</h1>
+          <p id="s1-tagline">Your whole school. On one screen.</p>
+        </div>
+      </section>
+
+      <!-- Scene 2: Sign in (3.5 - 7.5) -->
+      <section id="s2" class="clip" data-start="3.5" data-duration="4.0" data-track-index="0">
+        <div id="s2-content" class="screen-content">
+          <p id="s2-caption" class="screen-caption">One login. Every role sees their own portal.</p>
+          <div id="s2-card" class="screen-card">
+            <div class="chrome-bar"><span class="chrome-dot r"></span><span class="chrome-dot y"></span><span class="chrome-dot g"></span></div>
+            <div class="screen-frame">
+              <img id="s2-img" class="screen-img" src="assets/images/00-login.png" alt="Seltiv SLMS sign-in screen" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Scene 3: School office (7.5 - 14.5) -->
+      <section id="s3" class="clip" data-start="7.5" data-duration="7.0" data-track-index="0">
+        <div id="s3-content" class="screen-content">
+          <span id="s3-tag" class="portal-tag office">For the school office</span>
+          <p id="s3-caption" class="screen-caption">Admissions to report cards — one pipeline, not a filing cabinet.</p>
+          <div id="s3-card" class="screen-card">
+            <div class="chrome-bar"><span class="chrome-dot r"></span><span class="chrome-dot y"></span><span class="chrome-dot g"></span></div>
+            <div class="screen-frame">
+              <img id="s3-img-a" class="screen-img" src="assets/images/01-admin-dashboard.png" alt="Admin dashboard" />
+              <img id="s3-img-b" class="screen-img" src="assets/images/04-admin-admissions.png" alt="Admissions pipeline" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Scene 4: Teacher (14.5 - 21.5) -->
+      <section id="s4" class="clip" data-start="14.5" data-duration="7.0" data-track-index="0">
+        <div id="s4-content" class="screen-content">
+          <span id="s4-tag" class="portal-tag teacher">For teachers</span>
+          <p id="s4-caption" class="screen-caption">Roll call takes seconds. Marks reach the report card the same day.</p>
+          <div id="s4-card" class="screen-card">
+            <div class="chrome-bar"><span class="chrome-dot r"></span><span class="chrome-dot y"></span><span class="chrome-dot g"></span></div>
+            <div class="screen-frame">
+              <img id="s4-img-a" class="screen-img" src="assets/images/11-teacher-rollcall.png" alt="Teacher roll call screen" />
+              <img id="s4-img-b" class="screen-img" src="assets/images/12-teacher-gradesheet.png" alt="Gradesheet marks entry" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Scene 5: Parents (21.5 - 28.5) -->
+      <section id="s5" class="clip" data-start="21.5" data-duration="7.0" data-track-index="0">
+        <div id="s5-content" class="screen-content">
+          <span id="s5-tag" class="portal-tag parents">For parents</span>
+          <p id="s5-caption" class="screen-caption">Pay from a phone. No bank queue.</p>
+          <div id="s5-card" class="screen-card">
+            <div class="chrome-bar"><span class="chrome-dot r"></span><span class="chrome-dot y"></span><span class="chrome-dot g"></span></div>
+            <div class="screen-frame">
+              <img id="s5-img-a" class="screen-img" src="assets/images/20-parent-dashboard.png" alt="Parent dashboard" />
+              <img id="s5-img-b" class="screen-img" src="assets/images/24-parent-fees.png" alt="Parent fees and bKash payment" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Scene 6: Accounts (28.5 - 35.5) -->
+      <section id="s6" class="clip" data-start="28.5" data-duration="7.0" data-track-index="0">
+        <div id="s6-content" class="screen-content">
+          <span id="s6-tag" class="portal-tag accounts">For accounts</span>
+          <p id="s6-caption" class="screen-caption">The ledger closes itself.</p>
+          <div id="s6-card" class="screen-card">
+            <div class="chrome-bar"><span class="chrome-dot r"></span><span class="chrome-dot y"></span><span class="chrome-dot g"></span></div>
+            <div class="screen-frame">
+              <img id="s6-img-a" class="screen-img" src="assets/images/33-accounts-bkash-crop.png" alt="bKash reconciliation" />
+              <img id="s6-img-b" class="screen-img" src="assets/images/34-accounts-reports.png" alt="Financial reports" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Scene 7: Reproducible architecture (35.5 - 40.5) -->
+      <section id="s7" class="clip" data-start="35.5" data-duration="5.0" data-track-index="0">
+        <div id="s7-content">
+          <p id="s7-caption">Reproducible for any school running more than one branch.</p>
+          <div class="branch-row">
+            <div id="s7-card1" class="branch-card"><span class="num">01</span><span class="label">Own process<br />Own database</span></div>
+            <div id="s7-card2" class="branch-card"><span class="num">02</span><span class="label">Own process<br />Own database</span></div>
+            <div id="s7-card3" class="branch-card"><span class="num">03</span><span class="label">Own process<br />Own database</span></div>
+            <div id="s7-card4" class="branch-card plus"><span class="num">+</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Scene 8: Outro (40.5 - 45.0) -->
+      <section id="s8" class="clip" data-start="40.5" data-duration="4.5" data-track-index="0">
+        <div id="s8-content" class="wordmark-content">
+          <h2 id="s8-title">Seltiv SLMS</h2>
+          <p id="s8-tagline">Built for every school.</p>
+        </div>
+      </section>
+
+      <!-- Audio: music bed -->
+      <audio
+        id="bg-music"
+        src="assets/music/happy-beats-business-moves-vol-10-by-ende-dot-app.mp3"
+        data-start="0"
+        data-duration="45"
+        data-track-index="10"
+        data-automation='{"version":1,"lanes":[{"target":"volume","points":[{"t":0,"v":0},{"t":0.6,"v":0.27},{"t":34.5,"v":0.27},{"t":36.5,"v":0.33},{"t":43.0,"v":0.33},{"t":45.0,"v":0}]}]}'
+      ></audio>
+
+      <!-- Audio: portal transition ticks -->
+      <audio id="sfx-s3-tick" src="assets/sfx/interface/drop_001.ogg" data-start="11.0" data-duration="0.14" data-track-index="11" data-volume="0.55"></audio>
+      <!-- beat-locked: 18.01s (real strong_beat cue from bundled preset) -->
+      <audio id="sfx-s4-tick" src="assets/sfx/interface/drop_002.ogg" data-start="18.01" data-duration="0.19" data-track-index="12" data-volume="0.55"></audio>
+      <audio id="sfx-s5-tick" src="assets/sfx/interface/drop_003.ogg" data-start="25.0" data-duration="0.191" data-track-index="13" data-volume="0.55"></audio>
+      <audio id="sfx-s6-tick" src="assets/sfx/interface/drop_001.ogg" data-start="32.0" data-duration="0.14" data-track-index="14" data-volume="0.5"></audio>
+
+      <!-- Audio: architecture card ticks (beat-grid, extrapolated from 109.96 BPM / 0.5457s interval beyond the bundled preset's ~24.6s window) -->
+      <!-- beat-grid: card1 36.57s, card2 37.11s, card3 37.66s, plus 38.20s -->
+      <audio id="sfx-s7-card1" src="assets/sfx/interface/click_001.ogg" data-start="36.57" data-duration="0.10" data-track-index="15" data-volume="0.45"></audio>
+      <audio id="sfx-s7-card2" src="assets/sfx/interface/click_002.ogg" data-start="37.11" data-duration="0.01" data-track-index="16" data-volume="0.45"></audio>
+      <audio id="sfx-s7-card3" src="assets/sfx/interface/click_003.ogg" data-start="37.66" data-duration="0.01" data-track-index="17" data-volume="0.45"></audio>
+      <audio id="sfx-s7-plus" src="assets/sfx/interface/switch_001.ogg" data-start="38.20" data-duration="0.3" data-track-index="18" data-volume="0.4"></audio>
+
+      <!-- Audio: outro accent -->
+      <!-- beat-locked: 40.93s (extrapolated grid) -->
+      <audio id="sfx-s8-accent" src="assets/sfx/interface/bong_001.ogg" data-start="40.93" data-duration="0.12" data-track-index="19" data-volume="0.45"></audio>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+
+      /* ---------- Scene 1 — hook (0 - 3.5) ---------- */
+      tl.fromTo("#s1-title", { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, 0.15);
+      tl.fromTo("#s1-tagline", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0.85);
+      tl.to("#s1-content", { opacity: 0, duration: 0.35, ease: "power1.in" }, 3.0);
+
+      /* ---------- Scene 2 — sign in (3.5 - 7.5) ---------- */
+      tl.fromTo("#s2-caption", { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 3.6);
+      tl.fromTo("#s2-card", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 3.82);
+      tl.fromTo("#s2-img", { scale: 1.0 }, { scale: 1.05, duration: 3.5, ease: "none" }, 3.82);
+      tl.to("#s2-content", { opacity: 0, duration: 0.35, ease: "power1.in" }, 7.15);
+
+      /* ---------- Scene 3 — school office (7.5 - 14.5) ---------- */
+      tl.fromTo("#s3-tag", { opacity: 0, y: -8 }, { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 7.6);
+      tl.fromTo("#s3-caption", { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 7.72);
+      tl.fromTo("#s3-card", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 7.9);
+      gsap.set("#s3-img-b", { opacity: 0 });
+      tl.fromTo("#s3-img-a", { scale: 1.0 }, { scale: 1.05, duration: 3.3, ease: "none" }, 7.9);
+      // screen-pair crossfade, tick at 11.0s (see sfx-s3-tick)
+      tl.to("#s3-img-a", { opacity: 0, duration: 0.45, ease: "power1.inOut" }, 11.0);
+      tl.fromTo("#s3-img-b", { opacity: 0, scale: 1.0 }, { opacity: 1, duration: 0.45, ease: "power1.inOut" }, 11.0);
+      tl.to("#s3-img-b", { scale: 1.05, duration: 3.2, ease: "none" }, 11.0);
+      tl.to("#s3-content", { opacity: 0, duration: 0.35, ease: "power1.in" }, 14.15);
+
+      /* ---------- Scene 4 — teacher (14.5 - 21.5) ---------- */
+      tl.fromTo("#s4-tag", { opacity: 0, y: -8 }, { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 14.6);
+      tl.fromTo("#s4-caption", { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 14.72);
+      tl.fromTo("#s4-card", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 14.9);
+      gsap.set("#s4-img-b", { opacity: 0 });
+      tl.fromTo("#s4-img-a", { scale: 1.0 }, { scale: 1.05, duration: 3.11, ease: "none" }, 14.9);
+      // screen-pair crossfade, beat-locked tick at 18.01s (real strong_beat cue)
+      tl.to("#s4-img-a", { opacity: 0, duration: 0.45, ease: "power1.inOut" }, 18.01);
+      tl.fromTo("#s4-img-b", { opacity: 0, scale: 1.0 }, { opacity: 1, duration: 0.45, ease: "power1.inOut" }, 18.01);
+      tl.to("#s4-img-b", { scale: 1.05, duration: 3.2, ease: "none" }, 18.01);
+      tl.to("#s4-content", { opacity: 0, duration: 0.35, ease: "power1.in" }, 21.15);
+
+      /* ---------- Scene 5 — parents (21.5 - 28.5) ---------- */
+      tl.fromTo("#s5-tag", { opacity: 0, y: -8 }, { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 21.6);
+      tl.fromTo("#s5-caption", { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 21.72);
+      tl.fromTo("#s5-card", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 21.9);
+      gsap.set("#s5-img-b", { opacity: 0 });
+      tl.fromTo("#s5-img-a", { scale: 1.0 }, { scale: 1.05, duration: 3.1, ease: "none" }, 21.9);
+      // screen-pair crossfade, tick at 25.0s (see sfx-s5-tick)
+      tl.to("#s5-img-a", { opacity: 0, duration: 0.45, ease: "power1.inOut" }, 25.0);
+      tl.fromTo("#s5-img-b", { opacity: 0, scale: 1.0 }, { opacity: 1, duration: 0.45, ease: "power1.inOut" }, 25.0);
+      tl.to("#s5-img-b", { scale: 1.05, duration: 3.2, ease: "none" }, 25.0);
+      tl.to("#s5-content", { opacity: 0, duration: 0.35, ease: "power1.in" }, 28.15);
+
+      /* ---------- Scene 6 — accounts (28.5 - 35.5) ---------- */
+      tl.fromTo("#s6-tag", { opacity: 0, y: -8 }, { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 28.6);
+      tl.fromTo("#s6-caption", { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 28.72);
+      tl.fromTo("#s6-card", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 28.9);
+      gsap.set("#s6-img-b", { opacity: 0 });
+      tl.fromTo("#s6-img-a", { scale: 1.0 }, { scale: 1.05, duration: 3.1, ease: "none" }, 28.9);
+      // screen-pair crossfade, tick at 32.0s (see sfx-s6-tick)
+      tl.to("#s6-img-a", { opacity: 0, duration: 0.45, ease: "power1.inOut" }, 32.0);
+      tl.fromTo("#s6-img-b", { opacity: 0, scale: 1.0 }, { opacity: 1, duration: 0.45, ease: "power1.inOut" }, 32.0);
+      tl.to("#s6-img-b", { scale: 1.05, duration: 3.2, ease: "none" }, 32.0);
+      tl.to("#s6-content", { opacity: 0, duration: 0.35, ease: "power1.in" }, 35.15);
+
+      /* ---------- Scene 7 — reproducible architecture (35.5 - 40.5) ---------- */
+      tl.fromTo("#s7-caption", { opacity: 0, y: -12 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 35.8);
+      // beat-grid: card1 36.57s, card2 37.11s, card3 37.66s, plus 38.20s (extrapolated 0.5457s interval)
+      tl.fromTo("#s7-card1", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 36.57);
+      tl.fromTo("#s7-card2", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 37.11);
+      tl.fromTo("#s7-card3", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 37.66);
+      tl.fromTo("#s7-card4", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 38.2);
+      tl.to("#s7-content", { opacity: 0, duration: 0.35, ease: "power1.in" }, 40.15);
+
+      /* ---------- Scene 8 — outro (40.5 - 45.0) ---------- */
+      // beat-locked: 40.93s (extrapolated grid, matches sfx-s8-accent)
+      tl.fromTo("#s8-title", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 40.93);
+      tl.fromTo("#s8-tagline", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 41.65);
+
+      window.__timelines["seltiv-brag-detailed"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

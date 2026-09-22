@@ -1,0 +1,237 @@
+<title>Seltiv SLMS</title>
+<link rel="stylesheet" href="shared.css">
+<script src="shared.js"></script>
+<style>
+  /* hero: crazy */
+  .hero{position:relative; overflow:hidden; padding-block:64px 0;}
+  .hero-blobs{position:absolute; inset:-10% -10% auto -10%; height:130%; z-index:0; pointer-events:none;}
+  .blob{position:absolute; border-radius:50%; filter:blur(50px); opacity:.5;}
+  .blob1{width:420px;height:420px; background:var(--accent); top:-120px; left:-80px; animation:float1 16s ease-in-out infinite;}
+  .blob2{width:360px;height:360px; background:var(--accent2); top:40px; right:-100px; animation:float2 18s ease-in-out infinite;}
+  .blob3{width:280px;height:280px; background:var(--yellow); bottom:-120px; left:30%; opacity:.4; animation:float1 20s ease-in-out infinite reverse;}
+  @keyframes float1{0%,100%{transform:translate(0,0);} 50%{transform:translate(30px,20px);}}
+  @keyframes float2{0%,100%{transform:translate(0,0);} 50%{transform:translate(-24px,26px);}}
+  @media (prefers-reduced-motion: reduce){ .blob{animation:none;} }
+
+  .hero-inner{position:relative; z-index:1; display:grid; grid-template-columns:1.1fr .9fr; gap:44px; align-items:center; padding-bottom:64px;}
+  @media (max-width:900px){ .hero-inner{grid-template-columns:1fr;} }
+
+  .chip{display:inline-flex; align-items:center; gap:7px; font-size:.78rem; font-weight:700; letter-spacing:.02em; background:var(--surface); border:1px solid var(--line-strong); padding:6px 12px; border-radius:20px; margin-bottom:20px; box-shadow:var(--shadow-card);}
+  .chip .sw{width:7px;height:7px;border-radius:50%;background:var(--yellow);}
+
+  .hero h1{font-size:clamp(2.3rem, 5vw, 3.8rem); line-height:1.04;}
+  .hero h1 .hl{color:var(--accent2); position:relative; white-space:nowrap;}
+  .hero p.lede{margin-top:20px; font-size:1.12rem; color:var(--muted); max-width:48ch; line-height:1.65;}
+  .hero-actions{display:flex; gap:14px; margin-top:30px; flex-wrap:wrap;}
+
+  .hero-visual{position:relative;}
+  .hero-visual .frame{transform:rotate(-2deg);}
+  .sticker{position:absolute; background:var(--yellow); color:var(--ink); font-weight:700; font-size:.78rem; padding:9px 14px; border-radius:30px; box-shadow:var(--shadow-pop); transform:rotate(6deg); z-index:2;}
+  .sticker.s1{top:-14px; right:-10px;}
+  .sticker.s2{bottom:6px; left:-26px; background:var(--accent2); color:#fff; transform:rotate(-8deg);}
+  @media (max-width:520px){ .sticker{display:none;} }
+
+  /* perks: floating cards overlapping the hero */
+  .perks{position:relative; z-index:2; margin-top:-38px;}
+  .perks-row{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
+  @media (max-width:760px){ .perks-row{grid-template-columns:1fr;} .perks{margin-top:-18px;} }
+  .perk-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-lg); box-shadow:var(--shadow-pop);
+    padding:20px 20px 22px; display:flex; gap:14px; align-items:flex-start; transition:transform .15s;
+  }
+  .perk-card:hover{transform:translateY(-3px);}
+  .perk-icon{width:42px;height:42px;flex:none;border-radius:12px;display:flex;align-items:center;justify-content:center;}
+  .perk-icon svg{width:22px;height:22px;}
+  .perk-card:nth-child(1) .perk-icon{background:var(--accent-50); color:var(--accent-700);}
+  .perk-card:nth-child(2) .perk-icon{background:#fff8df; color:#8a6a00;}
+  .perk-card:nth-child(3) .perk-icon{background:var(--accent2-50); color:var(--accent2-700);}
+  .perk-title{font-weight:700; font-size:.98rem; margin-bottom:3px;}
+  .perk-sub{color:var(--muted); font-size:.88rem; line-height:1.4;}
+
+  /* benefit sections */
+  section{padding-block:76px;}
+  .benefit{display:grid; grid-template-columns:1fr 1fr; gap:52px; align-items:center;}
+  .benefit.rev .benefit-media{order:2;}
+  @media (max-width:880px){ .benefit{grid-template-columns:1fr;} .benefit.rev .benefit-media{order:0;} }
+  .benefit + .benefit{margin-top:88px;}
+  .benefit h2{font-size:clamp(1.6rem,2.8vw,2.15rem); margin-bottom:14px;}
+  .benefit p{color:var(--muted); font-size:1.05rem; line-height:1.7; max-width:46ch;}
+  .benefit-media .frame{transform:rotate(1.4deg);}
+  .benefit.rev .benefit-media .frame{transform:rotate(-1.4deg);}
+
+  /* CTA */
+  .cta{background:linear-gradient(135deg, var(--accent-700), var(--accent2-700)); color:#fff; text-align:center; position:relative; overflow:hidden;}
+  .cta::before{content:""; position:absolute; inset:0; background:radial-gradient(circle at 20% 20%, rgba(255,255,255,.18), transparent 45%), radial-gradient(circle at 85% 80%, rgba(255,255,255,.14), transparent 45%);}
+  .cta-inner{position:relative; z-index:1; max-width:620px; margin-inline:auto;}
+  .cta h2{color:#fff; font-size:clamp(1.7rem,3.2vw,2.4rem);}
+  .cta p{color:rgba(255,255,255,.88); margin-top:14px; font-size:1.08rem;}
+  .cta .btn-primary{background:#fff; color:var(--accent2-700); margin-top:28px; font-size:.95rem; padding:13px 26px;}
+  .cta .btn-primary:hover{background:#fff2f8;}
+  .cta .fine{margin-top:14px; font-size:.82rem; color:rgba(255,255,255,.72);}
+
+  /* technical */
+  .tech{background:var(--panel); padding-block:52px;}
+  .tech .section-head{margin-bottom:28px;}
+  .tech .section-head h2{font-size:1.3rem;}
+  .stack-row{display:flex; flex-wrap:wrap; gap:9px; justify-content:center;}
+  .pill{font-family:ui-monospace,monospace; font-size:.76rem; border:1px solid var(--line-strong); background:var(--surface); padding:6px 11px; border-radius:20px; color:var(--muted);}
+  .arch-note{max-width:640px; margin:26px auto 0; text-align:center; color:var(--muted); font-size:.92rem; line-height:1.6;}
+</style>
+
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="index.html"><span class="dot"></span>Seltiv SLMS</a>
+    <div class="nav-right">
+      <button class="lang-toggle" id="langToggle" type="button" aria-label="Switch language">
+        <span class="l-en">EN</span><span class="l-bn">বাং</span>
+      </button>
+      <a class="btn btn-primary" href="#demo"><span class="en">Book a demo</span><span class="bn">ডেমো বুক করুন</span></a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-blobs"><div class="blob blob1"></div><div class="blob blob2"></div><div class="blob blob3"></div></div>
+  <div class="wrap hero-inner">
+    <div>
+      <span class="chip"><span class="sw"></span><span class="en">Built for every school</span><span class="bn">সব স্কুলের জন্য তৈরি</span></span>
+      <h1>
+        <span class="en">Your whole school.<br>On <span class="hl">one screen.</span></span>
+        <span class="bn">আপনার পুরো স্কুল।<br><span class="hl">এক স্ক্রিনে।</span></span>
+      </h1>
+      <p class="lede">
+        <span class="en">Admissions, attendance, report cards and fees — parents, teachers and the school office all see it the moment it happens. No more phone calls just to find out if a child came to school today.</span>
+        <span class="bn">ভর্তি, উপস্থিতি, রেজাল্ট আর ফি — অভিভাবক, শিক্ষক আর স্কুল অফিস সবাই সাথে সাথে দেখতে পান। সন্তান স্কুলে এসেছে কিনা জানতে আর ফোন করতে হয় না।</span>
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#demo"><span class="en">Book a demo</span><span class="bn">ডেমো বুক করুন</span></a>
+        <a class="btn btn-ghost" href="#parents"><span class="en">See what's inside</span><span class="bn">ভিতরে কী আছে দেখুন</span></a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <span class="sticker s1"><span class="en">No paperwork</span><span class="bn">কাগজ নেই</span></span>
+      <span class="sticker s2"><span class="en">Works on bKash</span><span class="bn">বিকাশে চলে</span></span>
+      <div class="frame">
+        <div class="frame-bar"><span></span><span></span><span></span></div>
+        <img src="img/00-login.png" alt="Seltiv SLMS sign-in screen">
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="perks">
+  <div class="wrap perks-row">
+    <div class="perk-card">
+      <div class="perk-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+      <div>
+        <div class="perk-title"><span class="en">An absence texts the parent instantly</span><span class="bn">অনুপস্থিতি হলে সাথে সাথে অভিভাবককে এসএমএস</span></div>
+        <div class="perk-sub"><span class="en">Roll call sends the SMS — nobody has to remember to.</span><span class="bn">রোল কল নিলেই এসএমএস চলে যায় — কাউকে মনে রাখতে হয় না।</span></div>
+      </div>
+    </div>
+    <div class="perk-card">
+      <div class="perk-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+      <div>
+        <div class="perk-title"><span class="en">Marks reach the report card the same day</span><span class="bn">নম্বর দিলে একই দিনে রেজাল্ট কার্ডে যোগ হয়</span></div>
+        <div class="perk-sub"><span class="en">A teacher enters it once, everyone downstream sees it.</span><span class="bn">শিক্ষক একবার দিলেই সবাই দেখতে পান।</span></div>
+      </div>
+    </div>
+    <div class="perk-card">
+      <div class="perk-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg></div>
+      <div>
+        <div class="perk-title"><span class="en">Fees get paid from a phone, by bKash</span><span class="bn">ফি পরিশোধ হয় ফোন থেকেই, বিকাশে</span></div>
+        <div class="perk-sub"><span class="en">No bank visit, no queue, a receipt on the spot.</span><span class="bn">ব্যাংকে যেতে হয় না, লাইনে দাঁড়াতে হয় না, সাথে সাথে রসিদ।</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section id="parents" class="wrap">
+  <div class="benefit">
+    <div>
+      <a class="tag t2" href="parents.html"><span class="en">For parents →</span><span class="bn">অভিভাবকদের জন্য →</span></a>
+      <h2><span class="en">Know the moment something happens at school</span><span class="bn">স্কুলে কিছু ঘটলেই সাথে সাথে জানুন</span></h2>
+      <p><span class="en">See your child's attendance, grades and notices as soon as they're recorded — no waiting for a report card to find out how the term went. Pay school fees from your phone with bKash, no bank queue.</span>
+      <span class="bn">আপনার সন্তানের উপস্থিতি, রেজাল্ট আর নোটিশ রেকর্ড হওয়ার সাথে সাথেই দেখতে পাবেন — পুরো টার্ম কেমন গেল জানতে রেজাল্ট কার্ডের অপেক্ষা করতে হবে না। ব্যাংকের লাইনে না দাঁড়িয়ে ফোন থেকেই বিকাশে স্কুলের ফি দিন।</span></p>
+    </div>
+    <div class="benefit-media">
+      <div class="frame"><div class="frame-bar"><span></span><span></span><span></span></div><img src="img/24-parent-fees.png" alt="Parent portal fee payment screen with bKash checkout"></div>
+    </div>
+  </div>
+
+  <div class="benefit rev" id="teachers">
+    <div class="benefit-media">
+      <div class="frame"><div class="frame-bar"><span></span><span></span><span></span></div><img src="img/11-teacher-rollcall.png" alt="Teacher roll call screen with attendance toggles"></div>
+    </div>
+    <div>
+      <a class="tag t1" href="teachers.html"><span class="en">For teachers →</span><span class="bn">শিক্ষকদের জন্য →</span></a>
+      <h2><span class="en">Roll call takes seconds, not a notebook</span><span class="bn">রোল কল এখন সেকেন্ডের কাজ, খাতা লাগে না</span></h2>
+      <p><span class="en">Mark a class present with a few taps. Any absence texts the parent automatically — you don't write a single message. Enter marks once and every report card updates itself.</span>
+      <span class="bn">কয়েকটা ট্যাপেই পুরো ক্লাসের উপস্থিতি নেওয়া যায়। কেউ অনুপস্থিত থাকলে অভিভাবকের কাছে এসএমএস আপনা-আপনি চলে যায় — নিজে কোনো মেসেজ লিখতে হয় না। একবার নম্বর দিলেই সব রেজাল্ট কার্ড আপডেট হয়ে যায়।</span></p>
+    </div>
+  </div>
+
+  <div class="benefit" id="office">
+    <div>
+      <a class="tag t3" href="office.html"><span class="en">For the school office →</span><span class="bn">স্কুল অফিসের জন্য →</span></a>
+      <h2><span class="en">Run admissions to report cards without the paper stack</span><span class="bn">কাগজের স্তূপ ছাড়াই ভর্তি থেকে রেজাল্ট পর্যন্ত সামলান</span></h2>
+      <p><span class="en">Every application, student file, class list and exam result lives in one place — found in seconds instead of a filing cabinet. See attendance and finance for the whole school at a glance.</span>
+      <span class="bn">প্রতিটি আবেদন, ছাত্রের ফাইল, ক্লাস লিস্ট আর পরীক্ষার ফলাফল এক জায়গায় থাকে — ফাইল কেবিনেটে খোঁজার বদলে সেকেন্ডেই পাওয়া যায়। পুরো স্কুলের উপস্থিতি আর হিসাব এক নজরে দেখুন।</span></p>
+    </div>
+    <div class="benefit-media">
+      <div class="frame"><div class="frame-bar"><span></span><span></span><span></span></div><img src="img/01-admin-dashboard.png" alt="Admin dashboard showing school overview"></div>
+    </div>
+  </div>
+
+  <div class="benefit rev" id="accounts">
+    <div class="benefit-media">
+      <div class="frame"><div class="frame-bar"><span></span><span></span><span></span></div><img src="img/33-accounts-bkash.png" alt="Accounts bKash reconciliation screen"></div>
+    </div>
+    <div>
+      <a class="tag t4" href="accounts.html"><span class="en">For accounts →</span><span class="bn">হিসাব বিভাগের জন্য →</span></a>
+      <h2><span class="en">The fee ledger closes itself</span><span class="bn">ফি খাতা নিজে থেকেই মিলে যায়</span></h2>
+      <p><span class="en">Every payment — bKash or otherwise — lands in one ledger automatically, so nothing gets typed in twice. Instalments, dues and payroll stop living in three spreadsheets that don't agree with each other.</span>
+      <span class="bn">প্রতিটি পেমেন্ট — বিকাশ হোক বা অন্য কিছু — নিজে থেকেই খাতায় যোগ হয়ে যায়, দুইবার টাইপ করতে হয় না। কিস্তি, বকেয়া আর বেতনের হিসাব আর আলাদা স্প্রেডশিটে রাখতে হয় না।</span></p>
+    </div>
+  </div>
+</section>
+
+<section id="demo" class="cta">
+  <div class="wrap cta-inner">
+    <h2><span class="en">See it running on your own school's data</span><span class="bn">নিজের স্কুলের তথ্য দিয়েই দেখুন কীভাবে কাজ করে</span></h2>
+    <p><span class="en">Twenty minutes, no obligation — we'll show you admissions, attendance and fees set up the way your school actually runs.</span>
+    <span class="bn">মাত্র বিশ মিনিট, কোনো বাধ্যবাধকতা নেই — আপনার স্কুল যেভাবে চলে ঠিক সেভাবে ভর্তি, উপস্থিতি আর ফি সেট করে দেখাবো।</span></p>
+    <a class="btn btn-primary" href="#"><span class="en">Book a demo</span><span class="bn">ডেমো বুক করুন</span></a>
+    <div class="fine"><span class="en">We'll ask a few questions about your school first.</span><span class="bn">প্রথমে আপনার স্কুল সম্পর্কে কয়েকটা প্রশ্ন জিজ্ঞাসা করব।</span></div>
+  </div>
+</section>
+
+<section class="tech">
+  <div class="wrap">
+    <div class="section-head">
+      <h2><span class="en">For your IT team</span><span class="bn">আপনার প্রযুক্তি দলের জন্য</span></h2>
+      <p><span class="en">Ordinary, well-chosen parts — each branch runs its own process and its own database, so one school's data never touches another's.</span>
+      <span class="bn">সাধারণ, ভালোভাবে বাছাই করা প্রযুক্তি — প্রতিটি শাখা নিজের প্রসেস আর নিজের ডেটাবেজে চলে, তাই এক স্কুলের তথ্য আরেক স্কুলের সাথে মেশে না।</span></p>
+    </div>
+    <div class="stack-row">
+      <span class="pill">Next.js 16 · App Router</span>
+      <span class="pill">React 19</span>
+      <span class="pill">TypeScript</span>
+      <span class="pill">MongoDB · Mongoose</span>
+      <span class="pill">NextAuth</span>
+      <span class="pill">Tailwind CSS v4</span>
+      <span class="pill">Cloudinary</span>
+      <span class="pill">Supabase Storage</span>
+      <span class="pill">nodemailer</span>
+      <span class="pill">bKash checkout</span>
+    </div>
+    <p class="arch-note">
+      <span class="en">Reproducible for any school running more than one branch — same codebase, one new environment file per branch, no shared tenant table.</span>
+      <span class="bn">একাধিক শাখাওয়ালা যেকোনো স্কুলের জন্য পুনরায় ব্যবহারযোগ্য — একই কোডবেস, শাখাপ্রতি একটি নতুন এনভায়রনমেন্ট ফাইল, কোনো শেয়ার্ড টেন্যান্ট টেবিল নেই।</span>
+    </p>
+  </div>
+</section>
+
+<footer>
+  <span class="en">Seltiv SLMS — one system, reproducible for any school.</span>
+  <span class="bn">Seltiv SLMS — একটি সিস্টেম, যেকোনো স্কুলের জন্য পুনরায় ব্যবহারযোগ্য।</span>
+</footer>
