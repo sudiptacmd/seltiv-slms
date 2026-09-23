@@ -1,0 +1,6 @@
+# Netlify config for the static marketing site.
+# This overrides the root netlify.toml (meant for the Next.js app) because
+# this site's base directory is set to "marketing".
+
+[build]
+  publish = "."
