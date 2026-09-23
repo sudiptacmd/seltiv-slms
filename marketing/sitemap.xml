@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://slms.seltiv.com/</loc>
+    <lastmod>2026-09-23</lastmod>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://slms.seltiv.com/"/>
+    <xhtml:link rel="alternate" hreflang="bn" href="https://slms.seltiv.com/bn"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://slms.seltiv.com/"/>
+  </url>
+  <url>
+    <loc>https://slms.seltiv.com/bn</loc>
+    <lastmod>2026-09-23</lastmod>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://slms.seltiv.com/"/>
+    <xhtml:link rel="alternate" hreflang="bn" href="https://slms.seltiv.com/bn"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://slms.seltiv.com/"/>
+  </url>
+  <url>
+    <loc>https://slms.seltiv.com/office</loc>
+    <lastmod>2026-09-23</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://slms.seltiv.com/office"/>
+    <xhtml:link rel="alternate" hreflang="bn" href="https://slms.seltiv.com/office/bn"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://slms.seltiv.com/office"/>
+  </url>
+  <url>
+    <loc>https://slms.seltiv.com/office/bn</loc>
+    <lastmod>2026-09-23</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://slms.seltiv.com/office"/>
+    <xhtml:link rel="alternate" hreflang="bn" href="https://slms.seltiv.com/office/bn"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://slms.seltiv.com/office"/>
+  </url>
+  <url>
+    <loc>https://slms.seltiv.com/teachers</loc>
+    <lastmod>2026-09-23</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://slms.seltiv.com/teachers"/>
+    <xhtml:link rel="alternate" hreflang="bn" href="https://slms.seltiv.com/teachers/bn"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://slms.seltiv.com/teachers"/>
+  </url>
+  <url>
+    <loc>https://slms.seltiv.com/teachers/bn</loc>
+    <lastmod>2026-09-23</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://slms.seltiv.com/teachers"/>
+    <xhtml:link rel="alternate" hreflang="bn" href="https://slms.seltiv.com/teachers/bn"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://slms.seltiv.com/teachers"/>
+  </url>
+  <url>
+    <loc>https://slms.seltiv.com/parents</loc>
+    <lastmod>2026-09-23</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://slms.seltiv.com/parents"/>
+    <xhtml:link rel="alternate" hreflang="bn" href="https://slms.seltiv.com/parents/bn"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://slms.seltiv.com/parents"/>
+  </url>
+  <url>
+    <loc>https://slms.seltiv.com/parents/bn</loc>
+    <lastmod>2026-09-23</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://slms.seltiv.com/parents"/>
+    <xhtml:link rel="alternate" hreflang="bn" href="https://slms.seltiv.com/parents/bn"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://slms.seltiv.com/parents"/>
+  </url>
+  <url>
+    <loc>https://slms.seltiv.com/accounts</loc>
+    <lastmod>2026-09-23</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://slms.seltiv.com/accounts"/>
+    <xhtml:link rel="alternate" hreflang="bn" href="https://slms.seltiv.com/accounts/bn"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://slms.seltiv.com/accounts"/>
+  </url>
+  <url>
+    <loc>https://slms.seltiv.com/accounts/bn</loc>
+    <lastmod>2026-09-23</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://slms.seltiv.com/accounts"/>
+    <xhtml:link rel="alternate" hreflang="bn" href="https://slms.seltiv.com/accounts/bn"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://slms.seltiv.com/accounts"/>
+  </url>
+</urlset>

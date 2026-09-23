@@ -8,8 +8,24 @@
     try{ var saved=localStorage.getItem('slms-lang'); if(saved==='bn'||saved==='en') return saved; }catch(e){}
     return 'en';
   }
+  /* swap title / description / canonical so the /bn URL is indexed as its own Bangla page */
+  var meta = {};
+  function applyMeta(lang){
+    var head = document.head; if(!head) return;
+    var desc = head.querySelector('meta[name="description"]');
+    var canon = head.querySelector('link[rel="canonical"]');
+    var bnTitle = head.querySelector('meta[name="slms-bn-title"]');
+    var bnDesc = head.querySelector('meta[name="slms-bn-description"]');
+    if(!meta.title){ meta.title = document.title; meta.desc = desc && desc.content; meta.canon = canon && canon.href; }
+    var bn = lang === 'bn';
+    if(bnTitle) document.title = bn ? bnTitle.content : meta.title;
+    if(desc && bnDesc) desc.content = bn ? bnDesc.content : meta.desc;
+    if(canon && meta.canon) canon.href = bn ? meta.canon.replace(/\/$/, '') + '/bn' : meta.canon;
+  }
   window.__slmsApplyLang = function(lang){
     document.documentElement.setAttribute('data-lang', lang);
+    document.documentElement.setAttribute('lang', lang);
+    applyMeta(lang);
     try{ localStorage.setItem('slms-lang', lang); }catch(e){}
   };
   window.__slmsApplyLang(detect());
@@ -22,7 +38,7 @@
         window.__slmsApplyLang(cur);
         try{
           var url = new URL(location.href);
-          var path = url.pathname.replace(/\/bn\/?$/, '').replace(/\/$/, '');
+          var path = url.pathname.replace(/\/bn\/?$/, '').replace(/(\/index)?\.html$/, '').replace(/\/$/, '');
           url.pathname = cur === 'bn' ? (path + '/bn') : path;
           history.replaceState(null, '', url.pathname + url.search);
         }catch(e){}

@@ -4,3 +4,43 @@
 
 [build]
   publish = "."
+
+# ── Bangla URLs ──
+# /bn and /<page>/bn serve the same HTML; shared.js switches language from the /bn suffix.
+# (Canonical tags point search engines at the clean /<page> URLs.)
+[[redirects]]
+  from = "/bn"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/office/bn"
+  to = "/office.html"
+  status = 200
+
+[[redirects]]
+  from = "/teachers/bn"
+  to = "/teachers.html"
+  status = 200
+
+[[redirects]]
+  from = "/parents/bn"
+  to = "/parents.html"
+  status = 200
+
+[[redirects]]
+  from = "/accounts/bn"
+  to = "/accounts.html"
+  status = 200
+
+# ── Caching ──
+[[headers]]
+  for = "/img/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
