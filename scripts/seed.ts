@@ -177,6 +177,7 @@ async function main() {
     email: "admin@sfhs.edu.bd",
     passwordHash,
     roles: ["admin"],
+    permissions: ["attendance.take", "marks.post", "notice.send", "invoice.batch", "payment.collect", "report.view", "user.manage", "audit.view"],
     staff: headStaff._id,
   });
   await M.User.create({
@@ -185,6 +186,7 @@ async function main() {
     email: mathTeacher.email,
     passwordHash,
     roles: ["teacher"],
+    permissions: ["attendance.take", "marks.post"],
     isClassTeacher: true,
     staff: mathTeacher._id,
   });
@@ -194,6 +196,7 @@ async function main() {
     email: accountantStaff.email,
     passwordHash,
     roles: ["accountant"],
+    permissions: ["invoice.batch", "payment.collect", "report.view"],
     staff: accountantStaff._id,
   });
   // give a second teacher account too
@@ -203,6 +206,7 @@ async function main() {
     email: staff[2].email,
     passwordHash,
     roles: ["teacher"],
+    permissions: ["attendance.take", "marks.post"],
     staff: staff[2]._id,
   });
 
@@ -824,6 +828,14 @@ async function main() {
   }
   console.log("• notices");
 
+  await M.CalendarDay.insertMany([
+    { date: "2026-10-01", kind: "event", title: "Class 8 science project submission" },
+    { date: "2026-10-04", kind: "event", title: "Weekly test marks deadline" },
+    { date: "2026-10-08", kind: "holiday", title: "Durga Puja holiday" },
+    { date: "2026-10-15", kind: "event", title: "Parent–teacher meeting" },
+    { date: "2026-11-10", kind: "exam", title: "Annual examination begins" },
+  ]);
+
   /* ─────────────── Service request types + Nabila's requests ─────────────── */
   const srTypes = await M.ServiceRequestType.insertMany([
     { name: "Transfer Certificate", code: "TC", fee: 200, stages: ["Submitted", "Verification", "Head-teacher approval", "Ready"], documentType: "transfer_certificate" },
@@ -931,6 +943,15 @@ async function main() {
     await M.Notification.insertMany([
       { user: nabilaUser._id, title: "September tuition due on 5 Sep", href: "/parent/fees", icon: "wallet" },
       { user: nabilaUser._id, title: "Annual Examination results published", href: "/parent/child/gradesheet", icon: "award" },
+    ]);
+  }
+
+  if (adminUser) {
+    await M.AuditLog.insertMany([
+      { actor: adminUser._id, actorName: "Administrator", action: "notice.publish", entity: "Notice", after: { audience: "All parents", channels: ["portal", "sms"] }, createdAt: d("2026-09-28") },
+      { actor: adminUser._id, actorName: "Administrator", action: "invoice.batch_generate", entity: "Invoice", after: { period: "2026-09", invoices: 138 }, createdAt: d("2026-09-27") },
+      { actor: adminUser._id, actorName: "Administrator", action: "user.permission", entity: "User", after: { grants: ["marks.post", "attendance.take"] }, createdAt: d("2026-09-26") },
+      { actor: adminUser._id, actorName: "Administrator", action: "timetable.auto_generate", entity: "TimetableEntry", after: { section: "Class 8 B", slots: 30 }, createdAt: d("2026-09-25") },
     ]);
   }
 

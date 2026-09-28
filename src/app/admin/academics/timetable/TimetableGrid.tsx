@@ -3,7 +3,8 @@
 import { useActionState } from "react";
 import { FormMessage } from "@/components/ui/form";
 import { useActionEffect } from "@/components/ui/action-form";
-import { saveTimetableEntry } from "@/lib/actions/academics";
+import { saveTimetableEntry, generateTimetable } from "@/lib/actions/academics";
+import { SubmitButton } from "@/components/ui/action-form";
 import type { ActionState } from "@/lib/actions/_common";
 
 const DAYS = ["sunday", "monday", "tuesday", "wednesday", "thursday"] as const;
@@ -24,12 +25,18 @@ export function TimetableGrid({
   entries: Entry[];
 }) {
   const [state, action] = useActionState<ActionState, FormData>(saveTimetableEntry, {});
+  const [generateState, generateAction] = useActionState<ActionState, FormData>(generateTimetable, {});
   useActionEffect(state);
+  useActionEffect(generateState);
   const find = (weekday: string, slotId: string) => entries.find((e) => e.weekday === weekday && e.slotId === slotId);
 
   return (
     <div>
-      <div className="px-4 pt-3"><FormMessage result={state} /></div>
+      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
+        <div><div className="text-[12px] font-medium">Smart routine builder</div><div className="text-[11px] text-muted">Balances subjects and avoids teacher conflicts across sections.</div></div>
+        <form action={generateAction}><input type="hidden" name="sectionId" value={sectionId} /><SubmitButton size="sm">Generate routine automatically</SubmitButton></form>
+      </div>
+      <div className="px-4"><FormMessage result={generateState.ok ? generateState : state} /></div>
       <div className="overflow-x-auto">
         <table className="w-full min-w-[900px] text-[12px]">
           <thead>
@@ -58,6 +65,7 @@ export function TimetableGrid({
                             <input type="hidden" name="weekday" value={d} />
                             <input type="hidden" name="slotId" value={slot.id} />
                             <select
+                              key={`subject-${e?.subjectId ?? "empty"}`}
                               name="subjectId"
                               defaultValue={e?.subjectId ?? ""}
                               onChange={(ev) => ev.currentTarget.form?.requestSubmit()}
@@ -67,6 +75,7 @@ export function TimetableGrid({
                               {subjects.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
                             </select>
                             <select
+                              key={`teacher-${e?.teacherId ?? "empty"}`}
                               name="teacherId"
                               defaultValue={e?.teacherId ?? ""}
                               onChange={(ev) => ev.currentTarget.form?.requestSubmit()}

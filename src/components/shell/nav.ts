@@ -42,6 +42,7 @@ export const ADMIN_NAV: NavGroup[] = [
     heading: "Attendance",
     items: [
       { label: "Monitor", href: "/admin/attendance", exact: true },
+      { label: "Teacher Attendance", href: "/admin/attendance/teachers" },
       { label: "Calendar & Settings", href: "/admin/attendance/settings" },
     ],
   },

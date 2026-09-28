@@ -14,6 +14,17 @@ export async function guard(...roles: Role[]) {
   return { user, deny: null };
 }
 
+/** Role membership is always required; a nonempty action list narrows it. */
+export async function guardAction(permission: string, ...roles: Role[]) {
+  const result = await guard(...roles);
+  if (result.deny || !result.user) return result;
+  const u = result.user;
+  if (!u.roles.includes('admin') && u.permissions?.length && !u.permissions.includes(permission)) {
+    return { user: u, deny: { error: 'Your account does not have access to this action.' } as ActionState };
+  }
+  return result;
+}
+
 export function revalidate(...paths: string[]) {
   for (const p of paths) revalidatePath(p, p.includes("[") ? "page" : undefined);
 }

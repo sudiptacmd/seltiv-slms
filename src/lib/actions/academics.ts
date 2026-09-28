@@ -174,6 +174,39 @@ export async function saveTimetableEntry(_prev: ActionState, form: FormData): Pr
   return { ok: true, message: "Timetable updated." };
 }
 
+export async function generateTimetable(_prev: ActionState, form: FormData): Promise<ActionState> {
+  const { user, deny } = await guard("admin");
+  if (deny) return deny;
+  await connectDb();
+  const f = fd(form);
+  const sectionId = f.str("sectionId");
+  const year = await getCurrentYear();
+  const [slots, assignments] = await Promise.all([
+    PeriodSlot.find({ isBreak: { $ne: true } }).sort({ order: 1 }).lean(),
+    SubjectAssignment.find({ section: sectionId, year: year._id }).sort({ createdAt: 1 }).lean(),
+  ]);
+  if (!sectionId || !slots.length || !assignments.length) return { error: "Assign teachers to subjects before generating the routine." };
+
+  const days = ["sunday", "monday", "tuesday", "wednesday", "thursday"] as const;
+  const occupied = await TimetableEntry.find({ year: year._id, section: { $ne: sectionId } }).lean();
+  const operations = [];
+  for (let di = 0; di < days.length; di++) {
+    for (let si = 0; si < slots.length; si++) {
+      const options = assignments.filter((a) => !occupied.some((o) => o.weekday === days[di] && String(o.slot) === String(slots[si]._id) && String(o.teacher) === String(a.teacher)));
+      if (!options.length) return { error: `No teacher is available on ${days[di]} during ${slots[si].name}. Existing routine was kept. Adjust assignments and try again.` };
+      const count = (subject: unknown) => operations.filter(o => String(o.subject) === String(subject)).length;
+      options.sort((a, b) => count(a.subject) - count(b.subject));
+      const chosen = options[0];
+      operations.push({ year: year._id, section: sectionId, weekday: days[di], slot: slots[si]._id, subject: chosen.subject, teacher: chosen.teacher });
+    }
+  }
+  await TimetableEntry.deleteMany({ section: sectionId, year: year._id });
+  await TimetableEntry.insertMany(operations);
+  await recordAudit({ actor: user, action: "timetable.auto_generate", entity: "TimetableEntry", entityId: sectionId, after: { slots: operations.length } });
+  revalidate("/admin/academics/timetable", "/teacher/timetable", "/admin/audit-log");
+  return { ok: true, message: `Routine generated with ${operations.length} teaching periods.` };
+}
+
 export async function addPeriodSlot(_prev: ActionState, form: FormData): Promise<ActionState> {
   const { deny } = await guard("admin");
   if (deny) return deny;

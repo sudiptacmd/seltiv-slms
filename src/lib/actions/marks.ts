@@ -4,7 +4,7 @@ import { connectDb } from "@/lib/db";
 import { Mark, MarkSubmission, ExamSubject, Enrollment, Exam } from "@/models";
 import { getCurrentYear } from "@/lib/queries";
 import { recordAudit } from "@/lib/audit";
-import { guard, revalidate, type ActionState } from "./_common";
+import { guard, guardAction, revalidate, type ActionState } from "./_common";
 
 async function loadContext(examId: string, sectionId: string, subjectId: string) {
   const year = await getCurrentYear();
@@ -15,7 +15,7 @@ async function loadContext(examId: string, sectionId: string, subjectId: string)
 }
 
 export async function saveMarks(_prev: ActionState, form: FormData): Promise<ActionState> {
-  const { user, deny } = await guard("teacher");
+  const { user, deny } = await guardAction("marks.post", "teacher");
   if (deny) return deny;
   await connectDb();
   const examId = String(form.get("examId") ?? "");

@@ -59,6 +59,7 @@ export default async function ParentFeesPage({ searchParams }: { searchParams: P
               <a href={`/print/invoice/${nextDue._id}`} target="_blank" className="text-[12px] text-accent-700 hover:underline">
                 Download invoice
               </a>
+              <Link href={`/invoice/${nextDue._id}`} className="text-[12px] text-accent-700 hover:underline">View & print invoice</Link>
             </div>
           </div>
         </Panel>
@@ -87,7 +88,7 @@ export default async function ParentFeesPage({ searchParams }: { searchParams: P
                       {bal > 0.5 ? (
                         <Link href={`/parent/fees/pay/${inv._id}`} className="text-[12px] font-medium text-accent-700 hover:underline">Pay</Link>
                       ) : (
-                        <a href={`/print/invoice/${inv._id}`} target="_blank" className="text-[12px] text-muted hover:underline">PDF</a>
+                        <Link href={`/invoice/${inv._id}`} className="text-[12px] text-muted hover:underline">View / Print</Link>
                       )}
                     </TD>
                   </TR>

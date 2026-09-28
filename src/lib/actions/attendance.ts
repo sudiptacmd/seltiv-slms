@@ -15,11 +15,11 @@ import { sendSms, renderTemplate } from "@/lib/adapters/sms";
 import { recordAudit } from "@/lib/audit";
 import { env } from "@/lib/env";
 import { formatDate } from "@/lib/utils";
-import { guard, revalidate, type ActionState } from "./_common";
+import { guard, guardAction, revalidate, type ActionState } from "./_common";
 import type { AttendanceStatus } from "@/models/types";
 
 export async function saveRollCall(_prev: ActionState, form: FormData): Promise<ActionState> {
-  const { user, deny } = await guard("teacher");
+  const { user, deny } = await guardAction("attendance.take", "teacher");
   if (deny) return deny;
   await connectDb();
 

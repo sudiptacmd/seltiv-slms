@@ -9,6 +9,8 @@ export interface IUser {
   phone: string;
   passwordHash: string;
   roles: Role[];
+  /** Fine-grained action grants. Empty means the role defaults apply. */
+  permissions?: string[];
   isClassTeacher?: boolean;
   active: boolean;
   mustChangePassword?: boolean;
@@ -31,6 +33,7 @@ const userSchema = new Schema<IUser>(
     phone: { type: String, required: true, unique: true, trim: true },
     passwordHash: { type: String, required: true },
     roles: { type: [String], enum: ROLES, default: ["parent"] },
+    permissions: { type: [String], default: [] },
     isClassTeacher: { type: Boolean, default: false },
     active: { type: Boolean, default: true },
     mustChangePassword: { type: Boolean, default: false },

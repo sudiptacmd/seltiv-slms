@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { requireRole } from "@/lib/session";
 import { PageHeader, Panel, StatTile } from "@/components/ui/primitives";
 import { Table, TableHeadRow, TH, TR, TD } from "@/components/ui/table";
@@ -10,7 +11,8 @@ import { taka } from "@/lib/utils";
 export const metadata: Metadata = { title: "Reports" };
 
 export default async function ReportsPage() {
-  await requireRole("accountant");
+  const user = await requireRole("accountant");
+  if (!user.roles.includes('admin') && user.permissions?.length && !user.permissions.includes('report.view')) redirect('/accounts');
   await connectDb();
   const year = await getCurrentYear();
 

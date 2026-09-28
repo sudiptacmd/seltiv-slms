@@ -129,6 +129,27 @@ export async function setUserRoles(_prev: ActionState, form: FormData): Promise<
   return { ok: true, message: "Roles updated." };
 }
 
+export async function setUserPermissions(_prev: ActionState, form: FormData): Promise<ActionState> {
+  const { user, deny } = await guard("admin");
+  if (deny) return deny;
+  await connectDb();
+  const f = fd(form);
+  const id = f.str("id");
+  const permissions = f.all("permission");
+  const before = await User.findById(id).select("permissions").lean();
+  await User.findByIdAndUpdate(id, { permissions });
+  await recordAudit({
+    actor: user,
+    action: "user.permission",
+    entity: "User",
+    entityId: id,
+    before: { permissions: before?.permissions ?? [] },
+    after: { permissions },
+  });
+  revalidate("/admin/users", "/admin/roles", "/admin/audit-log");
+  return { ok: true, message: "Action access updated." };
+}
+
 export async function resetUserPassword(_prev: ActionState, form: FormData): Promise<ActionState> {
   const { user, deny } = await guard("admin");
   if (deny) return deny;

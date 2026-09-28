@@ -35,6 +35,7 @@ export default async function UsersPage() {
             name: u.staff ? staffMap.get(String(u.staff)) ?? u.name : u.guardian ? gMap.get(String(u.guardian)) ?? u.name : u.name,
             phone: u.phone,
             roles: u.roles,
+            permissions: u.permissions ?? [],
             isClassTeacher: Boolean(u.isClassTeacher),
             active: u.active,
             kind: u.staff ? "staff" : u.guardian ? "guardian" : "—",

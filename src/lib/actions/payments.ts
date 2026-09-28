@@ -9,7 +9,7 @@ import { generateAndStoreReceipt } from "@/lib/documents";
 import { recordAudit } from "@/lib/audit";
 import { env } from "@/lib/env";
 import { getCurrentUser } from "@/lib/session";
-import { revalidate, type ActionState } from "./_common";
+import { guardAction, revalidate, type ActionState } from "./_common";
 
 /** Start a bKash payment for an invoice; returns the redirect URL. */
 export async function startBkashPayment(invoiceId: string, payerRef: string, returnTo: string) {
@@ -79,8 +79,8 @@ export async function completeBkashPayment(paymentID: string, outcome: "success"
 
 /** Accountant records a cash / offline payment. */
 export async function recordCashPayment(_prev: ActionState, form: FormData): Promise<ActionState> {
-  const user = await getCurrentUser();
-  if (!user || (!user.roles.includes("accountant") && !user.roles.includes("admin"))) return { error: "Not allowed." };
+  const { user, deny } = await guardAction("payment.collect", "accountant");
+  if (deny || !user) return deny ?? { error: "Not allowed." };
   await connectDb();
 
   const invoiceId = String(form.get("invoiceId") ?? "");

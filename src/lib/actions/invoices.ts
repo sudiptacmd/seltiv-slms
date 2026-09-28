@@ -6,12 +6,12 @@ import { getCurrentYear } from "@/lib/queries";
 import { computeInvoiceTotals, computeLateFee, buildInstalmentPlan, invoiceStatusFor } from "@/lib/fees";
 import { recordAudit } from "@/lib/audit";
 import { env } from "@/lib/env";
-import { guard, revalidate, type ActionState } from "./_common";
+import { guard, guardAction, revalidate, type ActionState } from "./_common";
 import crypto from "node:crypto";
 
 /** Generate monthly tuition invoices for a period, e.g. "2026-10". */
 export async function generateInvoiceRun(_prev: ActionState, form: FormData): Promise<ActionState> {
-  const { user, deny } = await guard("accountant");
+  const { user, deny } = await guardAction("invoice.batch", "accountant");
   if (deny) return deny;
   await connectDb();
 

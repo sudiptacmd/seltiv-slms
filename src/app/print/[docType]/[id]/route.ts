@@ -1,6 +1,6 @@
 import { getCurrentUser } from "@/lib/session";
 import { connectDb } from "@/lib/db";
-import { Payment, Payslip, GeneratedDocument, Student, ServiceRequest } from "@/models";
+import { Payment, Payslip, GeneratedDocument, Student, ServiceRequest, Invoice } from "@/models";
 import { assertChildOfParent } from "@/lib/parent";
 import {
   generateAndStoreReceipt,
@@ -37,6 +37,9 @@ export async function GET(
         break;
       }
       case "invoice": {
+        const invoice = await Invoice.findById(id).lean();
+        if (!invoice) return new Response("Not found", { status: 404 });
+        await ensureStudentAccess(user, String(invoice.student));
         pdfUrl = await generateInvoicePdf(id);
         break;
       }

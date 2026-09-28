@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { requireRole } from "@/lib/session";
-import { PageHeader, Panel, StatTile, EmptyState, LinkButton } from "@/components/ui/primitives";
+import { PageHeader, Panel, StatTile, EmptyState, LinkButton, Tag } from "@/components/ui/primitives";
 import { ChildSwitcher } from "@/components/ChildSwitcher";
 import { resolveChild, parentDashboard } from "@/lib/parent";
 import { taka, formatDate } from "@/lib/utils";
+import { connectDb } from "@/lib/db";
+import { Result, Subject } from "@/models";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
@@ -33,6 +35,23 @@ export default async function ParentDashboard({
   if (!data) return <EmptyState title="Could not load your child's record" />;
   const { profile, nextDue, latestExam, unreadNotices } = data;
   const latestGpa = profile.termGpas[profile.termGpas.length - 1];
+  await connectDb();
+  const results = await Result.find({ student: child.id })
+    .populate("exam", "name resultPublished")
+    .sort({ createdAt: 1 })
+    .lean();
+  const publishedResults = results.filter((r) => (r.exam as unknown as { resultPublished?: boolean })?.resultPublished);
+  const subjectIds = Array.from(new Set(publishedResults.flatMap((r) => r.subjects.map((s) => String(s.subject)))));
+  const subjectMap = new Map((await Subject.find({ _id: { $in: subjectIds } }).sort({ order: 1 }).lean()).map((s) => [String(s._id), s]));
+  const progressRows = subjectIds.map((subjectId) => {
+    const subject = subjectMap.get(subjectId);
+    const scores = publishedResults.map((r) => {
+      const line = r.subjects.find((s) => String(s.subject) === subjectId);
+      return line?.obtained == null ? null : Math.round((line.obtained / line.fullMarks) * 100);
+    });
+    const valid = scores.filter((s): s is number => s != null);
+    return { subjectId, name: subject?.name ?? "Subject", scores, change: valid.length > 1 ? valid.at(-1)! - valid.at(-2)! : 0 };
+  });
 
   return (
     <div>
@@ -86,6 +105,46 @@ export default async function ParentDashboard({
           )}
         </Panel>
       </div>
+
+      <Panel
+        title="Subject-wise progress — all assessments"
+        className="mt-4"
+        action={<Tag tone="ok">Live academic record</Tag>}
+        bodyClassName="p-0"
+      >
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[720px] text-[13px]">
+            <thead>
+              <tr className="border-b border-line-strong text-left text-[11px] uppercase tracking-[.04em] text-muted">
+                <th className="px-4 py-2.5">Subject</th>
+                {publishedResults.map((r) => <th key={String(r._id)} className="px-3 py-2.5 text-center">{(r.exam as unknown as { name: string }).name.replace(" Examination 2026", "")}</th>)}
+                <th className="px-4 py-2.5">Progress</th>
+              </tr>
+            </thead>
+            <tbody>
+              {progressRows.map((row) => {
+                const latest = row.scores.filter((s): s is number => s != null).at(-1) ?? 0;
+                return (
+                  <tr key={row.subjectId} className="border-b border-line last:border-0">
+                    <td className="px-4 py-2.5 font-medium">{row.name}</td>
+                    {row.scores.map((score, i) => <td key={i} className="px-3 py-2.5 text-center tabular-nums">{score == null ? "—" : `${score}%`}</td>)}
+                    <td className="min-w-44 px-4 py-2.5">
+                      <div className="flex items-center gap-2">
+                        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-panel"><div className="h-full rounded-full bg-accent" style={{ width: `${latest}%` }} /></div>
+                        <span className={row.change >= 0 ? "text-ok" : "text-danger"}>{row.change >= 0 ? "+" : ""}{row.change}%</span>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line bg-panel/50 px-4 py-3 text-[12px] text-muted">
+          <span>Attendance: <strong className="text-ink">{profile.attendance.pct ?? "—"}%</strong> · {profile.attendance.present} present · {profile.attendance.late} late · {profile.attendance.absent} absent</span>
+          <div className="flex gap-3"><Link href="/parent/child/attendance" className="text-accent-700 hover:underline">Attendance calendar →</Link><Link href="/parent/child/gradesheet" className="text-accent-700 hover:underline">Full gradesheets →</Link></div>
+        </div>
+      </Panel>
 
       {nextDue && (
         <Panel title="Upcoming fee" className="mt-4">

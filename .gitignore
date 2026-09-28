@@ -50,3 +50,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 /screenshots
+
+# Local walkthrough recordings and authenticated browser state
+/brag-output/interactive/
+/brag-output/seltiv-interactive-walkthrough.mp4

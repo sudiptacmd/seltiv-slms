@@ -4,7 +4,7 @@ import { requireRole } from "@/lib/session";
 import { PageHeader, Panel, StatTile, Tag } from "@/components/ui/primitives";
 import { teacherToday, teacherPendingMarks, teacherSections } from "@/lib/teacher";
 import { connectDb } from "@/lib/db";
-import { Notice } from "@/models";
+import { Notice, CalendarDay, Exam } from "@/models";
 import { formatDate } from "@/lib/utils";
 import { WEEKDAYS } from "@/models/types";
 
@@ -13,7 +13,7 @@ export const metadata: Metadata = { title: "Dashboard" };
 export default async function TeacherDashboard() {
   const user = await requireRole("teacher");
   await connectDb();
-  const [today, pendingMarks, sections, notices] = await Promise.all([
+  const [today, pendingMarks, sections, notices, calendar, exams] = await Promise.all([
     teacherToday(user.staffId!),
     teacherPendingMarks(user.staffId!),
     teacherSections(user.staffId!),
@@ -21,6 +21,8 @@ export default async function TeacherDashboard() {
       .sort({ publishedAt: -1 })
       .limit(4)
       .lean(),
+    CalendarDay.find({ date: { $gte: new Date().toISOString().slice(0, 10) } }).sort({ date: 1 }).limit(6).lean(),
+    Exam.find({ endDate: { $gte: new Date() } }).sort({ endDate: 1 }).limit(3).lean(),
   ]);
   const pendingUnsub = pendingMarks.filter((m) => !m.submitted);
   const dayName = WEEKDAYS[new Date().getDay()];
@@ -94,6 +96,31 @@ export default async function TeacherDashboard() {
             </ul>
           </Panel>
         </div>
+      </div>
+
+      <div className="mt-4 grid gap-4 lg:grid-cols-5">
+        <Panel title="Important dates & deadlines" className="lg:col-span-3" bodyClassName="p-0">
+          <ul className="divide-y divide-line">
+            {calendar.map((item) => (
+              <li key={String(item._id)} className="flex items-center gap-3 px-4 py-2.5 text-[13px]">
+                <div className="w-14 rounded bg-panel px-2 py-1 text-center text-[11px] font-medium tabular-nums">{formatDate(new Date(`${item.date}T00:00:00`), "short")}</div>
+                <span className="flex-1 font-medium">{item.title}</span>
+                <Tag tone={item.kind === "holiday" ? "accent2" : item.kind === "exam" ? "warn" : "accent"}>{item.kind}</Tag>
+              </li>
+            ))}
+            {calendar.length === 0 && <li className="px-4 py-3 text-[13px] text-muted">No upcoming calendar items.</li>}
+          </ul>
+        </Panel>
+        <Panel title="Assignment deadlines" className="lg:col-span-2" bodyClassName="p-0">
+          <ul className="divide-y divide-line text-[13px]">
+            {exams.map((exam, i) => (
+              <li key={String(exam._id)} className="px-4 py-2.5">
+                <div className="flex items-center justify-between gap-2"><span className="font-medium">{`Submit ${exam.name.replace(" Examination 2026", "")} marks`}</span><Tag tone={i === 0 ? "danger" : "warn"}>{formatDate(exam.endDate, "short")}</Tag></div>
+                <p className="mt-0.5 text-[11px] text-muted">Assigned sections · marks submission</p>
+              </li>
+            ))}
+          </ul>
+        </Panel>
       </div>
 
       <Panel title="My sections" className="mt-4">

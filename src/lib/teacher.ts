@@ -7,6 +7,7 @@ import {
   Enrollment,
   AttendanceSession,
   Exam,
+  ExamSubject,
   MarkSubmission,
   Student,
   PeriodSlot,
@@ -115,10 +116,13 @@ export async function teacherPendingMarks(staffId: string) {
 
   const pending: { exam: string; examId: string; section: string; sectionId: string; subject: string; subjectId: string; submitted: boolean }[] = [];
   for (const exam of openExams) {
+    const examSubjects = await ExamSubject.find({ exam: exam._id }).select('subject').lean();
+    const subjectIds = new Set(examSubjects.map(s => String(s.subject)));
     for (const a of assignments) {
       const sec = a.section as unknown as { _id: unknown; name: string; klass: { name: string } };
       const subj = a.subject as unknown as { _id: unknown; name: string };
       if (!sec || !subj) continue;
+      if (!subjectIds.has(String(subj._id))) continue;
       const sub = await MarkSubmission.findOne({ exam: exam._id, section: sec._id, subject: subj._id }).lean();
       pending.push({
         exam: exam.name,

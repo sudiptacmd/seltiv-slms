@@ -14,6 +14,7 @@ export type CurrentUser = {
   staffId?: string;
   guardianId?: string;
   isClassTeacher: boolean;
+  permissions?: string[];
 };
 
 export async function getCurrentUser(): Promise<CurrentUser | null> {
@@ -37,6 +38,7 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
     staffId: u.staff ? String(u.staff) : undefined,
     guardianId: u.guardian ? String(u.guardian) : undefined,
     isClassTeacher: Boolean(u.isClassTeacher),
+    permissions: u.permissions ?? [],
   };
 }
 
