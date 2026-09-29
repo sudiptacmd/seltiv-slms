@@ -55,7 +55,7 @@ export async function GET(
       case "report_card":
       case "gradesheet": {
         await ensureStudentAccess(user, id);
-        pdfUrl = await generateReportCardPdf(id, examId);
+        pdfUrl = await generateReportCardPdf(id, examId, isStaff(user));
         break;
       }
       case "transfer_certificate":
@@ -86,6 +86,9 @@ export async function GET(
     return new Response(`Could not generate document: ${e instanceof Error ? e.message : "error"}`, { status: 500 });
   }
 }
+
+const isStaff = (user: NonNullable<Awaited<ReturnType<typeof getCurrentUser>>>) =>
+  user.roles.includes("admin") || user.roles.includes("accountant") || user.roles.includes("teacher");
 
 async function ensureStudentAccess(
   user: NonNullable<Awaited<ReturnType<typeof getCurrentUser>>>,

@@ -41,13 +41,15 @@ export default async function ParentDashboard({
     .sort({ createdAt: 1 })
     .lean();
   const publishedResults = results.filter((r) => (r.exam as unknown as { resultPublished?: boolean })?.resultPublished);
-  const subjectIds = Array.from(new Set(publishedResults.flatMap((r) => r.subjects.map((s) => String(s.subject)))));
+  const subjectIds = Array.from(new Set(publishedResults.flatMap((r) => r.subjects.filter((s) => s.subject).map((s) => String(s.subject)))));
   const subjectMap = new Map((await Subject.find({ _id: { $in: subjectIds } }).sort({ order: 1 }).lean()).map((s) => [String(s._id), s]));
   const progressRows = subjectIds.map((subjectId) => {
     const subject = subjectMap.get(subjectId);
     const scores = publishedResults.map((r) => {
-      const line = r.subjects.find((s) => String(s.subject) === subjectId);
-      return line?.obtained == null ? null : Math.round((line.obtained / line.fullMarks) * 100);
+      // A subject may be printed as several papers (Bangla 1st/2nd) — combine them.
+      const lines = r.subjects.filter((s) => String(s.subject) === subjectId && s.obtained != null);
+      const full = lines.reduce((t, l) => t + l.fullMarks, 0);
+      return full ? Math.round((lines.reduce((t, l) => t + l.obtained!, 0) / full) * 100) : null;
     });
     const valid = scores.filter((s): s is number => s != null);
     return { subjectId, name: subject?.name ?? "Subject", scores, change: valid.length > 1 ? valid.at(-1)! - valid.at(-2)! : 0 };

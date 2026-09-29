@@ -1,0 +1,56 @@
+{
+  "examId": "6abb983f0551cac6e88f5923",
+  "sectionId": "6aba2d76b1ee1a490b4f808d",
+  "onCamera": {
+    "math": [
+      {
+        "roll": 1,
+        "values": {
+          "written": 60,
+          "objective": 22,
+          "oral": 20,
+          "attendance": 4.34,
+          "assignment": 10,
+          "ct": 10,
+          "diary": 5
+        }
+      },
+      {
+        "roll": 2,
+        "values": {
+          "written": 36,
+          "objective": 19,
+          "oral": 17,
+          "attendance": 4.8,
+          "assignment": 5,
+          "ct": 6,
+          "diary": 4
+        }
+      },
+      {
+        "roll": 3,
+        "values": {
+          "written": 62,
+          "objective": 13,
+          "oral": 13,
+          "attendance": 3.9,
+          "assignment": 9,
+          "ct": 5,
+          "diary": 3
+        }
+      },
+      {
+        "roll": 4,
+        "values": {
+          "written": 50,
+          "objective": 25,
+          "oral": 10,
+          "attendance": 3,
+          "assignment": 7,
+          "ct": 8,
+          "diary": 5
+        }
+      }
+    ]
+  }
+}

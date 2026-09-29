@@ -1,0 +1,19 @@
+1
+00:00:00,000 --> 00:00:13,219
+Describe the change in your own words.
+
+2
+00:00:13,219 --> 00:00:18,219
+AI prepares the proposal.  (Processing wait shortened.)
+
+3
+00:00:18,219 --> 00:00:27,451
+Review every allocation. You stay in control.
+
+4
+00:00:27,451 --> 00:00:35,690
+Approve the changes. The new marking structure is saved.
+
+5
+00:00:35,690 --> 00:00:39,742
+Saved in Seltiv SLMS — verified after reloading.

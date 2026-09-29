@@ -1,8 +1,10 @@
 import mongoose, { Schema, type Model } from "mongoose";
 
 /** Reuse a compiled model across hot reloads / serverless invocations. */
-export function defineModel<T>(name: string, schema: Schema): Model<T> {
-  return (mongoose.models[name] as Model<T>) ?? mongoose.model<T>(name, schema);
+export function defineModel<T>(name: string, schema: Schema<T>): Model<T> {
+  // In dev, a re-evaluated model file means its schema changed — recompile instead of reusing the stale model.
+  if (process.env.NODE_ENV === "development" && mongoose.models[name]) mongoose.deleteModel(name);
+  return (mongoose.models[name] as Model<T>) ?? mongoose.model<T, Model<T>>(name, schema);
 }
 
 export const baseSchemaOptions = {
@@ -22,7 +24,7 @@ export type Ref = mongoose.Types.ObjectId;
 export const ObjectId = Schema.Types.ObjectId;
 
 /** Atomic incrementing counters for human-readable reference numbers. */
-const counterSchema = new Schema({
+const counterSchema = new Schema<{ _id: string; seq: number }>({
   _id: { type: String, required: true },
   seq: { type: Number, default: 0 },
 });

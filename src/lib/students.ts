@@ -159,13 +159,13 @@ export async function getStudentSubjectMarks(studentId: string, examId: string) 
   const result = await Result.findOne({ student: studentId, exam: examId }).lean();
   if (!result) return null;
   const subjects = await Subject.find({
-    _id: { $in: result.subjects.map((s) => s.subject) },
+    _id: { $in: result.subjects.map((s) => s.subject).filter(Boolean) },
   }).lean();
   const map = new Map(subjects.map((s) => [String(s._id), s]));
   return {
     result,
     lines: result.subjects.map((s) => ({
-      name: map.get(String(s.subject))?.name ?? "—",
+      name: s.label ?? map.get(String(s.subject))?.name ?? "—",
       obtained: s.obtained,
       fullMarks: s.fullMarks,
       grade: s.grade,

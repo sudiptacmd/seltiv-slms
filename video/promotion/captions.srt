@@ -1,0 +1,51 @@
+1
+00:00:00,000 --> 00:00:03,811
+At year end the office opens Promotion and creates the next academic year.
+
+2
+00:00:03,811 --> 00:00:11,990
+One view: who is ready, who needs review, and the new admissions waiting for a seat.
+
+3
+00:00:11,990 --> 00:00:16,793
+Plan Class 7 — last year’s Class 6 students and the new admissions, together.
+
+4
+00:00:16,793 --> 00:00:19,009
+Students who failed are unticked automatically. Untick anyone else to hold them back.
+
+5
+00:00:19,009 --> 00:00:22,841
+Set how many students each section should hold.
+
+6
+00:00:22,841 --> 00:00:26,289
+Need more room? Add a new section.
+
+7
+00:00:26,289 --> 00:00:33,162
+Fill the sections in order — and adjust any student by hand.
+
+8
+00:00:33,162 --> 00:00:36,546
+Confirm: everyone is enrolled in 2027 with a roll number.
+
+9
+00:00:36,546 --> 00:00:39,159
+The overview updates — sections show their new head counts.
+
+10
+00:00:39,159 --> 00:00:42,162
+Students left out wait under “Not promoted yet”.
+
+11
+00:00:42,162 --> 00:00:47,957
+Promote a held-back student later, into any section with a free seat.
+
+12
+00:00:47,957 --> 00:00:55,944
+Or keep them in their current class for another year.
+
+13
+00:00:55,944 --> 00:01:00,136
+Every seat accounted for — ready for the new session.

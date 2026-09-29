@@ -6,9 +6,6 @@ import {
   TimetableEntry,
   Enrollment,
   AttendanceSession,
-  Exam,
-  ExamSubject,
-  MarkSubmission,
   Student,
   PeriodSlot,
   type Weekday,
@@ -102,40 +99,6 @@ export async function teacherToday(staffId: string) {
     todayClasses,
     rollCallPending: sections.filter((s) => s.isClassTeacher && !takenToday.some((t) => String(t.section) === s.id)),
   };
-}
-
-export async function teacherPendingMarks(staffId: string) {
-  await connectDb();
-  const year = await getCurrentYear();
-  const assignments = await SubjectAssignment.find({ teacher: staffId, year: year._id })
-    .populate("subject", "name")
-    .populate({ path: "section", populate: { path: "klass", select: "name" } })
-    .lean();
-  const openExams = await Exam.find({ year: year._id, resultPublished: false }).lean();
-  if (openExams.length === 0) return [];
-
-  const pending: { exam: string; examId: string; section: string; sectionId: string; subject: string; subjectId: string; submitted: boolean }[] = [];
-  for (const exam of openExams) {
-    const examSubjects = await ExamSubject.find({ exam: exam._id }).select('subject').lean();
-    const subjectIds = new Set(examSubjects.map(s => String(s.subject)));
-    for (const a of assignments) {
-      const sec = a.section as unknown as { _id: unknown; name: string; klass: { name: string } };
-      const subj = a.subject as unknown as { _id: unknown; name: string };
-      if (!sec || !subj) continue;
-      if (!subjectIds.has(String(subj._id))) continue;
-      const sub = await MarkSubmission.findOne({ exam: exam._id, section: sec._id, subject: subj._id }).lean();
-      pending.push({
-        exam: exam.name,
-        examId: String(exam._id),
-        section: `${sec.klass.name} ${sec.name}`,
-        sectionId: String(sec._id),
-        subject: subj.name,
-        subjectId: String(subj._id),
-        submitted: Boolean(sub?.submitted),
-      });
-    }
-  }
-  return pending;
 }
 
 export async function sectionRoster(sectionId: string) {

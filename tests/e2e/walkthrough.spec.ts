@@ -23,7 +23,7 @@ test("walkthrough screens", async ({ browser }) => {
   test.setTimeout(120_000);
   for (const role of [
     { phone: "01700000030", screens: [["parent-overview", "/parent"], ["parent-notices", "/parent/notices"], ["parent-fees", "/parent/fees"]] },
-    { phone: "01700000010", screens: [["teacher-overview", "/teacher"], ["teacher-attendance", "/teacher/attendance"], ["teacher-gradesheet", "/teacher/gradesheet"]] },
+    { phone: "01700000010", screens: [["teacher-overview", "/teacher"], ["teacher-attendance", "/teacher/attendance"]] },
     { phone: "01700000001", screens: [["admin-timetable", "/admin/academics/timetable"], ["admin-subjects", "/admin/academics/subjects"], ["admin-notices", "/admin/notices"], ["admin-users", "/admin/users"], ["admin-audit", "/admin/audit-log"], ["admin-teacher-attendance", "/admin/attendance/teachers"], ["admin-student-attendance", "/admin/attendance"]] },
     { phone: "01700000020", screens: [["finance-overview", "/accounts"], ["finance-ledger", "/accounts/fees"], ["finance-invoices", "/accounts/fees/invoices"], ["finance-bkash", "/accounts/bkash"], ["finance-payroll", "/accounts/payroll"], ["finance-reports", "/accounts/reports"]] },
   ] as const) {

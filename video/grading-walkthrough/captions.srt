@@ -1,0 +1,31 @@
+1
+00:00:00,000 --> 00:00:03,972
+The office opens the exam and chooses Enter grades.
+
+2
+00:00:03,972 --> 00:00:08,372
+Pick a section. Every subject and paper has its own tab.
+
+3
+00:00:08,372 --> 00:00:26,321
+Type the section’s marks. Converted (a), (b), total and grade are calculated as you go.
+
+4
+00:00:26,321 --> 00:00:29,583
+Save — Mathematics is complete for all 12 students.
+
+5
+00:00:29,583 --> 00:00:39,217
+Add attendance and the class teacher’s remarks.
+
+6
+00:00:39,217 --> 00:00:48,906
+The summary shows every subject, the GPA and each student’s position.
+
+7
+00:00:48,906 --> 00:00:52,839
+Process the results — as a draft first, publish when ready.
+
+8
+00:00:52,839 --> 00:01:04,754
+The report card, in the school’s own format — ready to print or share.

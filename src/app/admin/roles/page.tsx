@@ -12,7 +12,7 @@ const CAPABILITIES: { area: string; admin: string; teacher: string; accountant: 
   { area: "Admissions", admin: "Full", teacher: "—", accountant: "—", parent: "Apply / track" },
   { area: "Students", admin: "Full", teacher: "Read (own sections)", accountant: "Fee ledger", parent: "Own child" },
   { area: "Attendance", admin: "Monitor all", teacher: "Take roll call", accountant: "—", parent: "Own child" },
-  { area: "Exams & grades", admin: "Process & publish", teacher: "Enter marks", accountant: "—", parent: "Published gradesheet" },
+  { area: "Exams & grades", admin: "Enter grades, process & publish", teacher: "—", accountant: "—", parent: "Published gradesheet" },
   { area: "Fees", admin: "Structure & overview", teacher: "—", accountant: "Collect, invoice, reconcile", parent: "Pay own invoices" },
   { area: "Payroll", admin: "—", teacher: "Own payslips", accountant: "Full", parent: "—" },
   { area: "Notices", admin: "Compose & send", teacher: "Read (+ class notice)", accountant: "—", parent: "Read" },

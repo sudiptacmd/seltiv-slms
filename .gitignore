@@ -54,3 +54,7 @@ next-env.d.ts
 # Local walkthrough recordings and authenticated browser state
 /brag-output/interactive/
 /brag-output/seltiv-interactive-walkthrough.mp4
+
+# AI workflow recordings and visual verification artifacts
+/video/ai-live/raw/
+/video/ai-live/*.png

@@ -1,0 +1,16 @@
+import { chromium, expect } from '@playwright/test';
+const browser=await chromium.launch();
+const page=await browser.newPage({viewport:{width:1600,height:900}});
+page.on('pageerror',e=>console.log('PAGE ERROR',e.message));
+await page.goto('http://localhost:3000/login');
+await page.getByLabel('Phone or email').fill('01700000001');await page.getByLabel('Password').fill('password123');
+await page.getByRole('button',{name:'Sign in',exact:true}).click();await page.waitForURL('**/admin',{timeout:30000});
+await page.getByRole('link',{name:'Seltiv AI',exact:true}).click();
+await page.getByRole('heading',{name:'Seltiv AI',exact:true}).waitFor();
+await page.screenshot({path:'video/ai-live/request.png'});
+await page.getByRole('button',{name:'Try a Class 8 Science example'}).click();
+await page.getByRole('button',{name:'Prepare changes'}).click();
+await expect(page.getByRole('heading',{name:'Review proposed changes'}).or(page.getByRole('alert'))).toBeVisible({timeout:150000});
+await page.screenshot({path:'video/ai-live/review.png'});
+console.log(await page.locator('main').innerText());
+await browser.close();

@@ -57,7 +57,7 @@ test("teacher screens", async ({ page }) => {
   await shots(page, [
     ["10-teacher-dashboard", "/teacher"],
     ["11-teacher-rollcall", "/teacher/attendance"],
-    ["12-teacher-gradesheet", "/teacher/gradesheet"],
+    
     ["13-teacher-timetable", "/teacher/timetable"],
   ]);
 });

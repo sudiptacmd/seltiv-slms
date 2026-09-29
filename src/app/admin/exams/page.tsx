@@ -59,7 +59,7 @@ export default async function ExamsPage() {
                     {e.startDate ? `${formatDate(e.startDate, "short")} – ${formatDate(e.endDate, "short")}` : "dates not set"}
                   </span>
                   <div className="flex gap-3">
-                    <Link href={`/admin/exams/${e._id}/marks`} className="text-accent-700 hover:underline">Marks status</Link>
+                    <Link href={`/admin/exams/${e._id}/grading`} className="text-accent-700 hover:underline">Enter grades</Link>
                     <Link href={`/admin/exams/${e._id}/results`} className="text-accent-700 hover:underline">Results</Link>
                   </div>
                 </div>

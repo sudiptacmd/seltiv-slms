@@ -25,6 +25,12 @@ export function CreateExamForm({
           {terms.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
         </Select>
       </Field>
+      <Field label="Assessment type">
+        <Select name="markingPeriod" defaultValue="">
+          <option value="">Standard (single total)</option><option value="pretest">Pretest</option><option value="test">Test</option><option value="final_term">Final term</option>
+        </Select>
+        <p className="mt-1 text-[11px] text-muted">Uses the approved marking structure for each subject.</p>
+      </Field>
       <FormRow cols={2}>
         <Field label="Start"><Input name="startDate" type="date" /></Field>
         <Field label="End"><Input name="endDate" type="date" /></Field>

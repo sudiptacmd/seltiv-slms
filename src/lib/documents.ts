@@ -9,6 +9,7 @@ import {
   Payslip,
   Staff,
   Result,
+  Section,
   Subject,
   Exam,
   Settings,
@@ -25,9 +26,9 @@ import {
   ReceiptPdf,
   InvoicePdf,
   PayslipPdf,
-  ReportCardPdf,
   CertificatePdf,
 } from "@/pdf/documents";
+import { ReportCardPdf } from "@/pdf/report-card";
 
 async function render(element: React.ReactElement): Promise<Buffer> {
   const { renderToBuffer } = await import("@react-pdf/renderer");
@@ -132,35 +133,61 @@ export async function generatePayslipPdf(payslipId: string): Promise<string> {
   return url;
 }
 
-export async function generateReportCardPdf(studentId: string, examId?: string): Promise<string> {
+/** Report card PDF. Parents only ever get published results; office staff can preview drafts. */
+export async function generateReportCardPdf(studentId: string, examId?: string, includeUnpublished = false): Promise<string> {
   await connectDb();
   const year = await getCurrentYear();
-  const { student, className, roll } = await studentContext(studentId);
+  const { student } = await studentContext(studentId);
   const q: Record<string, unknown> = { student: studentId, year: year._id };
   if (examId) q.exam = examId;
   const results = await Result.find(q).populate({ path: "exam", select: "name term resultPublished", populate: { path: "term", select: "order" } }).lean();
-  const published = results.filter((r) => (r.exam as unknown as { resultPublished?: boolean })?.resultPublished);
-  published.sort((a, b) => ((a.exam as unknown as { term?: { order: number } }).term?.order ?? 0) - ((b.exam as unknown as { term?: { order: number } }).term?.order ?? 0));
+  const shown = results.filter((r) => includeUnpublished || (r.exam as unknown as { resultPublished?: boolean })?.resultPublished);
+  shown.sort((a, b) => ((a.exam as unknown as { term?: { order: number } }).term?.order ?? 0) - ((b.exam as unknown as { term?: { order: number } }).term?.order ?? 0));
 
-  const allSubjectIds = [...new Set(published.flatMap((r) => r.subjects.map((sub) => String(sub.subject))))];
+  const allSubjectIds = [...new Set(shown.flatMap((r) => r.subjects.map((sub) => sub.subject).filter(Boolean).map(String)))];
   const subjects = await Subject.find({ _id: { $in: allSubjectIds } }).lean();
   const subjMap = new Map(subjects.map((sub) => [String(sub._id), sub.name]));
+  const latest = shown.at(-1);
+  const enrollment = await Enrollment.findOne({ student: studentId, year: year._id }).lean();
+  const section = await Section.findById(latest?.section ?? enrollment?.section).populate("klass", "name").populate("classTeacher", "name").lean();
+  const settings = await Settings.findOne().lean();
 
   const buf = await render(
     createElement(ReportCardPdf, {
+      school: {
+        name: settings?.schoolName || env.school.name,
+        code: env.school.code,
+        address: settings?.address || env.school.address,
+        eiin: settings?.eiin || env.school.eiin || undefined,
+        phone: settings?.phone || env.school.phone,
+        email: settings?.email || env.school.email,
+        headTeacher: settings?.headTeacher,
+        logoUrl: settings?.logoUrl || env.school.logoUrl || undefined,
+      },
+      year: year.name,
       student: student?.name ?? "—",
       studentCode: student?.studentCode ?? "—",
-      className,
-      roll,
-      exams: published.map((r) => ({
+      className: (section?.klass as unknown as { name?: string } | undefined)?.name ?? "—",
+      section: section?.name ?? "—",
+      roll: enrollment?.rollNumber ?? "—",
+      classTeacher: (section?.classTeacher as unknown as { name?: string } | undefined)?.name,
+      exams: shown.map((r) => ({
         name: (r.exam as unknown as { name: string }).name,
+        rows: r.rows,
+        grandTotal: r.totalObtained,
+        totalFull: r.totalFull,
+        percent: r.percent,
+        failed: r.failed,
         gpa: r.gpa,
         grade: r.grade,
-        percent: r.percent,
         sectionRank: r.sectionRank,
         classRank: r.classRank,
+        sectionCount: r.sectionCount,
+        classCount: r.classCount,
+        remarks: r.remarks,
+        attendance: r.attendance,
         subjects: r.subjects.map((sub) => ({
-          name: subjMap.get(String(sub.subject)) ?? "—",
+          name: sub.label ?? subjMap.get(String(sub.subject)) ?? "—",
           obtained: sub.obtained,
           fullMarks: sub.fullMarks,
           grade: sub.grade,
@@ -169,7 +196,7 @@ export async function generateReportCardPdf(studentId: string, examId?: string):
       })),
     }),
   );
-  const { url } = await uploadPdf(buf, { folder: "report-cards", filename: `${student?.studentCode}-${examId ?? "all"}.pdf` });
+  const { url } = await uploadPdf(buf, { folder: "report-cards", filename: `${student?.studentCode}-${examId ?? "all"}-${Date.now()}.pdf` });
   await GeneratedDocument.create({ type: examId ? "gradesheet" : "report_card", title: `Report — ${student?.name}`, url, student: studentId, relatedId: examId });
   return url;
 }

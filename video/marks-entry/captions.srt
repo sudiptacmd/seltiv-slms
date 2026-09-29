@@ -1,0 +1,23 @@
+1
+00:00:00,000 --> 00:00:04,896
+Open the Gradesheet and pick Class 8 A · Mathematics.
+
+2
+00:00:04,896 --> 00:00:12,198
+Type each student's marks. Below the pass mark shows in red.
+
+3
+00:00:12,198 --> 00:00:23,137
+Tick Absent where needed. The entered count updates live.
+
+4
+00:00:23,137 --> 00:00:26,917
+Save a draft at any time.
+
+5
+00:00:26,917 --> 00:00:32,637
+Submit. The sheet becomes read-only for the office to process.
+
+6
+00:00:32,637 --> 00:00:38,172
+Status updated to Submitted.

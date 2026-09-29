@@ -10,6 +10,7 @@ export * from "./academic";
 export * from "./timetable";
 export * from "./attendance";
 export * from "./exam";
+export * from "./report";
 export * from "./admission";
 export * from "./finance";
 export * from "./payroll";

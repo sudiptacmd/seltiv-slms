@@ -1,5 +1,6 @@
 "use server";
 
+import { PERIODS } from "@/lib/ai/grading";
 import { connectDb } from "@/lib/db";
 import {
   Exam,
@@ -8,10 +9,10 @@ import {
   ClassModel,
   Subject,
   Section,
-  Mark,
-  MarkSubmission,
   Result,
   Enrollment,
+  GradeEntry,
+  ExamStudentRecord,
   GradingScale,
   Notice,
   NoticeRecipient,
@@ -19,7 +20,8 @@ import {
   User,
 } from "@/models";
 import { getCurrentYear } from "@/lib/queries";
-import { computeResult, rankResults } from "@/lib/academic";
+import { getReportScheme } from "@/lib/grading";
+import { computeReport, rankReports, type RowValues } from "@/lib/report-card";
 import { recordAudit } from "@/lib/audit";
 import { sendBulkSms } from "@/lib/adapters/sms";
 import { env } from "@/lib/env";
@@ -37,10 +39,15 @@ export async function createExam(_prev: ActionState, form: FormData): Promise<Ac
   const classIds = f.all("classId");
   if (!termId || !name || classIds.length === 0) return { error: "Name, term and at least one class are required." };
 
+  const markingPeriod = f.str("markingPeriod");
+  if (markingPeriod && !PERIODS.includes(markingPeriod as typeof PERIODS[number])) return { error: "Invalid assessment type." };
+  if (!await Term.exists({ _id: termId, year: year._id })) return { error: "Select a term in the current academic year." };
+
   const exam = await Exam.create({
     year: year._id,
     term: termId,
     name,
+    markingPeriod: markingPeriod || undefined,
     classes: classIds,
     startDate: f.date("startDate"),
     endDate: f.date("endDate"),
@@ -115,93 +122,92 @@ export async function processExamResults(_prev: ActionState, form: FormData): Pr
 
   const exam = await Exam.findById(examId).lean();
   if (!exam) return { error: "Exam not found." };
-  const year = await getCurrentYear();
   const scale = await GradingScale.findOne({ isDefault: true }).lean();
-
-  const [examSubjects, marks, enrollments] = await Promise.all([
-    ExamSubject.find({ exam: examId }).lean(),
-    Mark.find({ exam: examId }).lean(),
-    Enrollment.find({ year: year._id, klass: { $in: exam.classes }, status: "active" }).lean(),
+  const [enrollments, entries, records] = await Promise.all([
+    Enrollment.find({ year: exam.year, klass: { $in: exam.classes }, status: "active" }).lean(),
+    GradeEntry.find({ exam: examId }).lean(),
+    ExamStudentRecord.find({ exam: examId }).lean(),
   ]);
-  const esByClassSubj = new Map(examSubjects.map((es) => [`${es.klass}:${es.subject}`, es]));
-  const marksByStudentSubj = new Map(marks.map((m) => [`${m.student}:${m.subject}`, m]));
-  const subjectsByClass = new Map<string, string[]>();
-  for (const es of examSubjects) {
-    const k = String(es.klass);
-    if (!subjectsByClass.has(k)) subjectsByClass.set(k, []);
-    subjectsByClass.get(k)!.push(String(es.subject));
+  const entriesByStudent = new Map<string, Map<string, { values: RowValues; absent: boolean }>>();
+  for (const e of entries) {
+    const sid = String(e.student);
+    if (!entriesByStudent.has(sid)) entriesByStudent.set(sid, new Map());
+    entriesByStudent.get(sid)!.set(e.row, { values: e.values instanceof Map ? Object.fromEntries(e.values) : { ...e.values }, absent: e.absent });
   }
+  const recordByStudent = new Map(records.map((r) => [String(r.student), r]));
 
-  const bySection = new Map<string, { student: string; totalObtained: number; gpa: number }[]>();
-  const byClass = new Map<string, { student: string; totalObtained: number; gpa: number }[]>();
   let processed = 0;
+  for (const klassId of exam.classes.map(String)) {
+    const scheme = await getReportScheme(klassId);
+    const computed = enrollments
+      .filter((enr) => String(enr.klass) === klassId && entriesByStudent.has(String(enr.student)))
+      .map((enr) => ({ enr, id: String(enr.student), report: computeReport(scheme, entriesByStudent.get(String(enr.student))!, scale) }));
+    if (!computed.length) continue;
 
-  for (const enr of enrollments) {
-    const subjectIds = subjectsByClass.get(String(enr.klass)) ?? [];
-    const subjectMarks = subjectIds.map((sid) => {
-      const es = esByClassSubj.get(`${enr.klass}:${sid}`)!;
-      const m = marksByStudentSubj.get(`${enr.student}:${sid}`);
-      return {
-        subjectId: sid,
-        obtained: m?.obtained ?? null,
-        fullMarks: es.fullMarks,
-        passMarks: es.passMarks,
-        absent: Boolean(m?.absent),
-        exempt: Boolean(m?.exempt),
-      };
-    });
-    if (subjectMarks.every((m) => m.obtained == null && !m.absent)) continue; // nothing entered
+    const highest = new Map(scheme.map((row) => {
+      const totals = computed.map((c) => c.report.rows.find((r) => r.key === row.key)?.total).filter((t): t is number => t != null);
+      return [row.key, totals.length ? Math.max(...totals) : null];
+    }));
+    const flat = computed.map((c) => ({ id: c.id, section: String(c.enr.section), gpa: c.report.gpa, grandTotal: c.report.grandTotal, failed: c.report.failed }));
+    const classRanks = rankReports(flat);
+    const sectionRanks = new Map<string, number>(), sectionCounts = new Map<string, number>();
+    for (const sec of new Set(flat.map((f) => f.section))) {
+      const list = flat.filter((f) => f.section === sec);
+      sectionCounts.set(sec, list.length);
+      for (const [id, rank] of rankReports(list)) sectionRanks.set(id, rank);
+    }
 
-    const computed = computeResult(subjectMarks, scale);
-    const res = await Result.findOneAndUpdate(
-      { exam: examId, student: enr.student },
-      {
-        exam: examId,
-        year: year._id,
-        section: enr.section,
-        klass: enr.klass,
-        student: enr.student,
-        subjects: computed.subjects.map((s) => ({
-          subject: s.subjectId,
-          obtained: s.obtained,
-          fullMarks: s.fullMarks,
-          grade: s.grade,
-          gpa: s.gpa,
-          absent: s.absent,
-        })),
-        totalObtained: computed.totalObtained,
-        totalFull: computed.totalFull,
-        percent: computed.percent,
-        gpa: computed.gpa,
-        grade: computed.grade,
-        failed: computed.failed,
-        ...(publish ? { publishedAt: new Date() } : {}),
-      },
-      { upsert: true, new: true },
-    );
-    processed++;
-
-    const secKey = String(enr.section);
-    const clsKey = String(enr.klass);
-    if (!bySection.has(secKey)) bySection.set(secKey, []);
-    if (!byClass.has(clsKey)) byClass.set(clsKey, []);
-    bySection.get(secKey)!.push({ student: String(res!._id), totalObtained: computed.totalObtained, gpa: computed.gpa });
-    byClass.get(clsKey)!.push({ student: String(res!._id), totalObtained: computed.totalObtained, gpa: computed.gpa });
-  }
-
-  for (const [, list] of bySection) {
-    const ranks = rankResults(list);
-    for (const [rid, rank] of ranks) await Result.updateOne({ _id: rid }, { sectionRank: rank });
-  }
-  for (const [, list] of byClass) {
-    const ranks = rankResults(list);
-    for (const [rid, rank] of ranks) await Result.updateOne({ _id: rid }, { classRank: rank });
+    for (const { enr, id, report } of computed) {
+      const rec = recordByStudent.get(id);
+      const byKey = new Map(scheme.map((r) => [r.key, r]));
+      await Result.findOneAndUpdate(
+        { exam: examId, student: enr.student },
+        {
+          exam: examId,
+          year: exam.year,
+          section: enr.section,
+          klass: enr.klass,
+          student: enr.student,
+          rows: report.rows.map((r) => {
+            const row = byKey.get(r.key)!;
+            return {
+              key: r.key, label: r.label, kind: r.kind, values: r.values, max: row.max,
+              summativePct: row.summativePct, continuousPct: row.continuousPct,
+              summativeConverted: r.summativeConverted, continuousConverted: r.continuousConverted,
+              total: r.total, fullMarks: r.fullMarks, grade: r.grade, gp: r.gp, highest: highest.get(r.key) ?? null, absent: r.absent,
+            };
+          }),
+          subjects: report.rows.filter((r) => r.kind === "main").map((r) => ({
+            subject: r.subject, label: r.label, obtained: r.absent ? null : r.total, fullMarks: r.fullMarks, grade: r.grade, gpa: r.gp, absent: r.absent,
+          })),
+          totalObtained: report.grandTotal,
+          totalFull: report.totalFull,
+          percent: report.percent,
+          gpa: report.gpa,
+          grade: report.grade,
+          failed: report.failed,
+          sectionRank: sectionRanks.get(id),
+          classRank: classRanks.get(id),
+          sectionCount: sectionCounts.get(String(enr.section)),
+          classCount: computed.length,
+          attendance: {
+            workingDays: rec?.workingDays,
+            present: rec?.present,
+            absent: rec?.workingDays != null && rec?.present != null ? rec.workingDays - rec.present : undefined,
+            late: rec?.late,
+          },
+          remarks: rec?.remarks || undefined,
+          ...(publish ? { publishedAt: new Date() } : {}),
+        },
+        { upsert: true },
+      );
+      processed++;
+    }
   }
 
   if (publish) {
     await Exam.updateOne({ _id: examId }, { resultPublished: true });
     await Result.updateMany({ exam: examId }, { publishedAt: new Date() });
-    await MarkSubmission.updateMany({ exam: examId }, { locked: true });
   }
 
   await recordAudit({
@@ -211,26 +217,13 @@ export async function processExamResults(_prev: ActionState, form: FormData): Pr
     entityId: examId,
     after: { processed, published: publish },
   });
-  revalidate("/admin/exams", `/admin/exams/${examId}/results`, "/parent/child/gradesheet", "/admin");
+  revalidate("/admin/exams", `/admin/exams/${examId}/results`, `/admin/exams/${examId}/grading`, "/parent/child/gradesheet", "/admin");
   return {
     ok: true,
     message: publish
-      ? `Results published for ${processed} students. Gradesheets are now visible to parents.`
+      ? `Results published for ${processed} students. Report cards are now visible to parents.`
       : `Processed ${processed} students (draft — not yet visible to parents).`,
   };
-}
-
-export async function toggleMarkLock(_prev: ActionState, form: FormData): Promise<ActionState> {
-  const { deny } = await guard("admin");
-  if (deny) return deny;
-  await connectDb();
-  const id = String(form.get("id") ?? "");
-  const sub = await MarkSubmission.findById(id);
-  if (!sub) return { error: "Not found." };
-  sub.locked = !sub.locked;
-  await sub.save();
-  revalidate("/admin/exams");
-  return { ok: true, message: sub.locked ? "Locked." : "Unlocked for the teacher." };
 }
 
 void Term;

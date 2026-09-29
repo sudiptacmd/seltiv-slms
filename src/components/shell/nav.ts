@@ -11,7 +11,7 @@ export const PORTAL_META: Record<Role, { name: string; base: string }> = {
 };
 
 export const ADMIN_NAV: NavGroup[] = [
-  { items: [{ label: "Dashboard", href: "/admin", exact: true }] },
+  { items: [{ label: "Dashboard", href: "/admin", exact: true }, { label: "Seltiv AI", href: "/admin/ai" }] },
   {
     heading: "Admissions",
     items: [
@@ -50,7 +50,9 @@ export const ADMIN_NAV: NavGroup[] = [
     heading: "Exams & Grades",
     items: [
       { label: "Exams", href: "/admin/exams", exact: true },
+      { label: "Report Card Layout", href: "/admin/exams/report-scheme" },
       { label: "Grading Scale", href: "/admin/exams/grading-scale" },
+      { label: "Marking Structure", href: "/admin/exams/marking-structure" },
       { label: "Report Cards", href: "/admin/exams/report-cards" },
     ],
   },
@@ -97,7 +99,6 @@ export const TEACHER_NAV: NavGroup[] = [
       { label: "My Classes", href: "/teacher/classes", exact: true },
       { label: "Attendance", href: "/teacher/attendance", exact: true },
       { label: "Attendance History", href: "/teacher/attendance/history" },
-      { label: "Gradesheet", href: "/teacher/gradesheet", exact: true },
       { label: "Class Schedule", href: "/teacher/timetable" },
       { label: "Notices", href: "/teacher/notices" },
       { label: "My Payslips", href: "/teacher/profile" },

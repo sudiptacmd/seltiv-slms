@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { requireRole } from "@/lib/session";
 import { PageHeader, Panel, StatTile, Tag } from "@/components/ui/primitives";
-import { teacherToday, teacherPendingMarks, teacherSections } from "@/lib/teacher";
+import { teacherToday, teacherSections } from "@/lib/teacher";
 import { connectDb } from "@/lib/db";
-import { Notice, CalendarDay, Exam } from "@/models";
+import { Notice, CalendarDay } from "@/models";
 import { formatDate } from "@/lib/utils";
 import { WEEKDAYS } from "@/models/types";
 
@@ -13,29 +13,25 @@ export const metadata: Metadata = { title: "Dashboard" };
 export default async function TeacherDashboard() {
   const user = await requireRole("teacher");
   await connectDb();
-  const [today, pendingMarks, sections, notices, calendar, exams] = await Promise.all([
+  const [today, sections, notices, calendar] = await Promise.all([
     teacherToday(user.staffId!),
-    teacherPendingMarks(user.staffId!),
     teacherSections(user.staffId!),
     Notice.find({ status: "published", "audience.kind": { $in: ["all", "all_teachers"] } })
       .sort({ publishedAt: -1 })
       .limit(4)
       .lean(),
     CalendarDay.find({ date: { $gte: new Date().toISOString().slice(0, 10) } }).sort({ date: 1 }).limit(6).lean(),
-    Exam.find({ endDate: { $gte: new Date() } }).sort({ endDate: 1 }).limit(3).lean(),
   ]);
-  const pendingUnsub = pendingMarks.filter((m) => !m.submitted);
   const dayName = WEEKDAYS[new Date().getDay()];
 
   return (
     <div>
       <PageHeader title={`Good day, ${user.personName.split(" ")[0]}`} subtitle={`${dayName[0].toUpperCase() + dayName.slice(1)} · ${formatDate(new Date())}`} />
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="grid grid-cols-3 gap-3">
         <StatTile value={sections.length} label="My sections" />
         <StatTile value={today.todayClasses.length} label="Classes today" />
         <StatTile value={today.rollCallPending.length} label="Roll call pending" tone={today.rollCallPending.length ? "warn" : "ok"} />
-        <StatTile value={pendingUnsub.length} label="Mark sheets to submit" tone={pendingUnsub.length ? "warn" : "ok"} />
       </div>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
@@ -62,7 +58,7 @@ export default async function TeacherDashboard() {
 
         <div className="space-y-4">
           <Panel title="Pending tasks">
-            {today.rollCallPending.length === 0 && pendingUnsub.length === 0 ? (
+            {today.rollCallPending.length === 0 ? (
               <p className="text-[13px] text-muted">Nothing pending — nicely done.</p>
             ) : (
               <ul className="space-y-2 text-[13px]">
@@ -70,14 +66,6 @@ export default async function TeacherDashboard() {
                   <li key={s.id} className="flex items-center justify-between">
                     <span>Roll call — {s.name}</span>
                     <Link href={`/teacher/attendance?sectionId=${s.id}`} className="font-medium text-accent-700">Take now</Link>
-                  </li>
-                ))}
-                {pendingUnsub.slice(0, 6).map((m, i) => (
-                  <li key={i} className="flex items-center justify-between">
-                    <span>Marks — {m.section} · {m.subject}</span>
-                    <Link href={`/teacher/gradesheet/${m.examId}/${m.subjectId}?section=${m.sectionId}`} className="font-medium text-accent-700">
-                      Enter
-                    </Link>
                   </li>
                 ))}
               </ul>
@@ -98,8 +86,8 @@ export default async function TeacherDashboard() {
         </div>
       </div>
 
-      <div className="mt-4 grid gap-4 lg:grid-cols-5">
-        <Panel title="Important dates & deadlines" className="lg:col-span-3" bodyClassName="p-0">
+      <div className="mt-4">
+        <Panel title="Important dates & deadlines" bodyClassName="p-0">
           <ul className="divide-y divide-line">
             {calendar.map((item) => (
               <li key={String(item._id)} className="flex items-center gap-3 px-4 py-2.5 text-[13px]">
@@ -109,16 +97,6 @@ export default async function TeacherDashboard() {
               </li>
             ))}
             {calendar.length === 0 && <li className="px-4 py-3 text-[13px] text-muted">No upcoming calendar items.</li>}
-          </ul>
-        </Panel>
-        <Panel title="Assignment deadlines" className="lg:col-span-2" bodyClassName="p-0">
-          <ul className="divide-y divide-line text-[13px]">
-            {exams.map((exam, i) => (
-              <li key={String(exam._id)} className="px-4 py-2.5">
-                <div className="flex items-center justify-between gap-2"><span className="font-medium">{`Submit ${exam.name.replace(" Examination 2026", "")} marks`}</span><Tag tone={i === 0 ? "danger" : "warn"}>{formatDate(exam.endDate, "short")}</Tag></div>
-                <p className="mt-0.5 text-[11px] text-muted">Assigned sections · marks submission</p>
-              </li>
-            ))}
           </ul>
         </Panel>
       </div>

@@ -1,3 +1,4 @@
+import type { Component, Allocation } from "@/lib/ai/grading";
 import { Schema } from "mongoose";
 import { defineModel, baseSchemaOptions, ObjectId, type Ref } from "./_helpers";
 
@@ -5,6 +6,7 @@ export interface IExam {
   _id: Ref;
   year: Ref;
   term: Ref;
+  markingPeriod?: Allocation["period"];
   name: string; // "Half-yearly Examination 2026"
   classes: Ref[]; // classes this exam covers
   startDate?: Date;
@@ -19,6 +21,7 @@ const examSchema = new Schema<IExam>(
     year: { type: ObjectId, ref: "AcademicYear", required: true, index: true },
     term: { type: ObjectId, ref: "Term", required: true },
     name: { type: String, required: true },
+    markingPeriod: { type: String, enum: ["pretest", "test", "final_term"] },
     classes: [{ type: ObjectId, ref: "Class" }],
     startDate: Date,
     endDate: Date,
@@ -34,6 +37,8 @@ export interface IExamSubject {
   exam: Ref;
   klass: Ref;
   subject: Ref;
+  markingComponents?: Component[];
+  markingVersion?: number;
   examDate?: Date;
   fullMarks: number;
   passMarks: number;
@@ -43,6 +48,8 @@ const examSubjectSchema = new Schema<IExamSubject>(
     exam: { type: ObjectId, ref: "Exam", required: true, index: true },
     klass: { type: ObjectId, ref: "Class", required: true },
     subject: { type: ObjectId, ref: "Subject", required: true },
+    markingComponents: { type: [{ _id: false, key: String, marks: Number }], default: undefined },
+    markingVersion: Number,
     examDate: Date,
     fullMarks: { type: Number, default: 100 },
     passMarks: { type: Number, default: 33 },
@@ -58,6 +65,7 @@ export interface IMark {
   section: Ref;
   subject: Ref;
   student: Ref;
+  componentMarks?: Record<string, number | null>;
   obtained: number | null; // null = not entered
   absent: boolean;
   exempt: boolean;
@@ -71,6 +79,7 @@ const markSchema = new Schema<IMark>(
     section: { type: ObjectId, ref: "Section", required: true, index: true },
     subject: { type: ObjectId, ref: "Subject", required: true, index: true },
     student: { type: ObjectId, ref: "Student", required: true, index: true },
+    componentMarks: { type: Map, of: Number },
     obtained: { type: Number, default: null },
     absent: { type: Boolean, default: false },
     exempt: { type: Boolean, default: false },
@@ -109,11 +118,29 @@ export const MarkSubmission = defineModel<IMarkSubmission>("MarkSubmission", mar
 
 /** Computed per student per exam. */
 export interface IResultSubject {
-  subject: Ref;
+  subject?: Ref;
+  label?: string; // e.g. "Bangla 1st Paper" — a subject can have several papers
   obtained: number | null;
   fullMarks: number;
   grade: string;
   gpa: number;
+  absent: boolean;
+}
+export interface IResultRow {
+  key: string;
+  label: string;
+  kind: "main" | "extra";
+  values: Record<string, number | null>;
+  max: Record<string, number>;
+  summativePct: number;
+  continuousPct: number;
+  summativeConverted: number | null;
+  continuousConverted: number | null;
+  total: number | null;
+  fullMarks: number;
+  grade: string;
+  gp: number;
+  highest: number | null;
   absent: boolean;
 }
 export interface IResult {
@@ -132,6 +159,12 @@ export interface IResult {
   failed: boolean;
   sectionRank: number;
   classRank: number;
+  /** Full report-card detail (admin-entered grading). Absent on results from the old single-total flow. */
+  rows?: IResultRow[];
+  sectionCount?: number;
+  classCount?: number;
+  attendance?: { workingDays?: number; present?: number; absent?: number; late?: number };
+  remarks?: string;
   publishedAt?: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -146,6 +179,7 @@ const resultSchema = new Schema<IResult>(
     subjects: [
       {
         subject: { type: ObjectId, ref: "Subject" },
+        label: String,
         obtained: Number,
         fullMarks: Number,
         grade: String,
@@ -161,6 +195,11 @@ const resultSchema = new Schema<IResult>(
     failed: Boolean,
     sectionRank: Number,
     classRank: Number,
+    rows: { type: [Schema.Types.Mixed], default: undefined },
+    sectionCount: Number,
+    classCount: Number,
+    attendance: { workingDays: Number, present: Number, absent: Number, late: Number },
+    remarks: String,
     publishedAt: Date,
   },
   baseSchemaOptions,
