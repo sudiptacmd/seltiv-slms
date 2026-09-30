@@ -1,109 +1,187 @@
+<p align="center">
+  <img src="docs/media/banner.svg" width="100%" alt="Seltiv SLMS — Your SLMS. Your server. Built-in AI.">
+</p>
+
+<p align="center">
+  <a href="#watch-it-work">Watch the demos</a> ·
+  <a href="#built-in-ai-for-academic-changes">Meet Seltiv AI</a> ·
+  <a href="#getting-started">Run it yourself</a> ·
+  <a href="https://sudipta.seltiv.com">Meet the developer</a>
+</p>
+
 # Seltiv SLMS
 
-Student Lifecycle Management System for the four schools of the Sheikh Farid Ahmed
-Education and Welfare Trust — one platform for **admissions, attendance, academics,
-finance and parent communication**.
+**Your SLMS. Your server. No per-student software fees.**
 
-Built from the proposal in [`docs/requirements.md`](docs/requirements.md). The
-original proposal deck lives in [`misc/`](misc/).
+Run admissions, attendance, academics, fees, payroll, and parent communication from one Student Lifecycle Management System. Give administrators, teachers, parents, and accountants their own workspace. Keep the application and database on infrastructure you control.
 
-> **Architecture:** no multi-tenancy — **each branch runs its own Node.js process
-> and its own database**. Branch identity comes from environment variables.
+**Built-in AI makes academic changes easier:** describe a marking change in English, বাংলা, or Banglish, review the proposed allocations, and approve it. The model runs locally through Ollama.
 
-## Stack
+Originally built for the four schools of the Sheikh Farid Ahmed Education and Welfare Trust. Each branch has its own application process, database, and configuration.
 
-| Concern | Choice |
+## Why self-host?
+
+- **Enrollment doesn't multiply a software subscription.** This repository has no per-student billing mechanism. You operate your own deployment.
+- **Your infrastructure, your data.** Choose your server and MongoDB deployment; manage backups and access yourself.
+- **Local AI.** Run the academic assistant on your own hardware without a hosted model API key.
+- **One connected school workflow.** Move from applications to enrollment, marks, results, fees, and the next academic year.
+
+Hosting, storage, backups, messaging, and AI compute still have operating costs and may grow with usage. Self-hosting removes per-student software charges; it does not make infrastructure unlimited.
+
+## Watch it work
+
+### Product tour · 1:18
+
+[![Watch the Seltiv SLMS product tour](docs/media/tour-preview.jpg)](public/walk-short.mp4)
+
+[▶ Watch the quick tour](public/walk-short.mp4) · [▶ Watch the full walkthrough — 5:24](public/walk-long.mp4)
+
+### Seltiv AI in the actual app · 0:47
+
+[![Watch an administrator review and approve AI-proposed marking changes](docs/media/ai-preview.jpg)](video/ai-live/seltiv-ai-live.mp4)
+
+[▶ Watch request → review → approve → reload](video/ai-live/seltiv-ai-live.mp4)
+
+Recorded against the running application with a local Qwen model and MongoDB persistence. Model waiting time is shortened and disclosed in the video captions.
+
+### Explore the workflows
+
+| Video | Length | What you'll see |
+|---|---:|---|
+| [Grading walkthrough](video/grading-walkthrough/seltiv-grading-walkthrough.mp4) | 1:14 | The grading workflow and report card |
+| [Teacher marks entry](video/marks-entry/seltiv-marks-entry-8a.mp4) | 0:44 | Class 8A marks entry and submission |
+| [Year-end promotion](video/promotion/seltiv-promotion-walkthrough.mp4) | 1:10 | Next-year enrollment, section placement, and held-back students |
+| [Admissions to promotion — extended demo](docs/media/admissions-to-promotion.mp4) | 3:31 | Applications, offers, promotion rules, review, graduation, and next-year sections |
+| [Product highlights](brag-output/brag.mp4) | 0:20 | Admin, teacher, and parent portal highlights |
+| [Earlier product overview](brag-output-2026-09-23-020723/brag.mp4) | 0:45 | A broader introduction to the school workflows |
+
+The extended admissions-to-promotion recording shows the local development version; some screens differ from the current default branch. The demos use seeded school records. Payment scenes demonstrate the mock bKash integration.
+
+<details>
+<summary>Design archive: the original AI concept video</summary>
+
+[Watch the earlier AI concept — 0:44](video/ai-grading/seltiv-ai-grading.mp4). This is a staged interface concept. The actual implemented feature is shown in the Seltiv AI recording above.
+
+</details>
+
+## Four portals, one school day
+
+| Workspace | What it handles |
 |---|---|
-| Framework | Next.js 16 (App Router, Server Actions), React 19, TypeScript |
-| Database | MongoDB via Mongoose |
-| Auth | NextAuth (Credentials) — phone/email + password, SMS-OTP reset |
-| Images | Cloudinary (falls back to local disk in dev) |
-| PDFs | Supabase Storage + `@react-pdf/renderer` (falls back to local disk) |
-| Email | nodemailer (SMTP in prod, `.eml` files in dev) |
-| SMS | **placeholder adapter** — records every message, no real gateway |
-| Payments | **mock bKash** — simulated tokenised checkout |
-| Styling | Tailwind CSS v4, design tokens from the proposal's Broadsheet system |
+| **Administration** | Admissions, student records, academics, attendance monitoring, exams, results, promotion, notices, staff, roles, settings, and audit history |
+| **Teachers** | Class lists, roll call, component-based marks entry, gradesheets, timetable, notices, and payslips |
+| **Parents** | Child profiles, attendance, grades, fees, notices, certificates, and service requests |
+| **Accounts** | Fee collection, invoices, dues, reminders, installments, payroll, payslips, payment reconciliation, and reports |
 
-## Portals
+<p align="center">
+  <img src="marketing/img/01-admin-dashboard.png" width="100%" alt="Seltiv SLMS administration dashboard">
+</p>
 
-- **`/admin`** — dashboard, admissions, students, academics, attendance monitor,
-  exams & grades, finance, notices, service requests, staff/users/roles, audit log,
-  settings.
-- **`/teacher`** — my classes, take roll call (+ absence SMS), gradesheet marks entry,
-  timetable, notices, payslips.
-- **`/parent`** — child profile, gradesheet, attendance calendar, fees & bKash payment,
-  notices, certificates, service requests.
-- **`/accounts`** — fee collection, invoice runs, dues & reminders, instalments,
-  payroll & payslips, bKash reconciliation, reports.
-- Public — `/login`, `/admissions/apply`, `/admissions/status`, `/pay/<token>`.
+## Built-in AI for academic changes
 
-> **Not built (by decision):** staff/teacher attendance (biometric hardware — on hold),
-> Online Exam / Question Bank, Transport, and all Phase-2 modules.
+Change marking structures by describing what you need:
 
-## Local development
+> For Class 8 Science, set Pretest to 100 marks: diary 5, attendance 10, weekly test 25, and final exam 60.
 
-Node is pinned to 22. This machine's system Node was broken (partial `libada`
-upgrade), so a working Node 22 lives in `~/.local/node22` with shims in
-`~/.local/bin`. Fix the system copy any time with `sudo pacman -S nodejs`.
+1. **Request.** Enter the class, subject, assessment periods, and component marks in English, Bengali, or Banglish.
+2. **Review.** Seltiv validates the model's response and displays current and proposed allocations.
+3. **Approve.** An administrator confirms the change. The application saves it with approval history.
+4. **Use it.** New and unstarted mark sheets use the approved structure. Sheets with saved marks retain their original allocation.
 
-### 1. MongoDB
+The assistant currently handles **Pretest, Test, and Final term marking components**. It sends the request and class/subject catalog to the configured Ollama endpoint; student records are not included. It does not edit arbitrary application code or recalculate published results.
 
-A standalone `mongod` is in `~/.local/mongodb`. Start it:
+[Read the AI feature and setup guide →](docs/ai-grading.md)
+
+## Getting started
+
+### Requirements
+
+- Node.js 22 and npm
+- A running MongoDB instance
+- Optional: Ollama with `qwen2.5-coder:7b` for Seltiv AI
+
+### 1. Install and configure
 
 ```bash
-~/.local/mongodb/bin/mongod --dbpath ~/.local/var/seltiv-mongo --port 27017 --bind_ip 127.0.0.1 --fork --logpath ~/.local/var/log/seltiv-mongod.log
+git clone https://github.com/sudiptacmd/seltiv-slms.git
+cd seltiv-slms
+npm ci --legacy-peer-deps
+cp .env.example .env.local
 ```
 
-Or point `MONGODB_URI` at any MongoDB (Atlas free tier works).
+Edit `.env.local`: set `MONGODB_URI`, school identity, `APP_URL`, and unique `AUTH_SECRET` and `CRON_SECRET` values. Generate each secret with `openssl rand -base64 32`.
 
-### 2. Install & configure
+### 2. Seed an empty development database
 
 ```bash
-npm install
-cp .env.example .env.local   # already done on this machine, with a generated AUTH_SECRET
+npm run seed
+npm run dev
 ```
 
-### 3. Seed demo data
+Open [localhost:3000](http://localhost:3000). The seed command refuses an existing database. `npm run seed -- --fresh` deletes existing data before reseeding; use it only for disposable demo databases.
 
-Reproduces the proposal mockups (Nabila Rahman, Class 8B, the payroll table, the
-admissions pipeline…).
+<details>
+<summary>Demo accounts</summary>
 
-```bash
-npm run seed -- --fresh
-```
-
-Demo logins (password `password123`):
+These accounts are created by the demo seed. Their password is `password123`.
 
 | Role | Phone |
 |---|---|
 | Admin | `01700000001` |
-| Teacher (class teacher, 8B) | `01700000010` |
+| Teacher | `01700000010` |
 | Teacher | `01700000011` |
 | Accountant | `01700000020` |
-| Parent (Nabila's guardian) | `01700000030` |
+| Parent | `01700000030` |
 
-### 4. Run
+Replace demo accounts and passwords before exposing a deployment publicly.
+
+</details>
+
+### 3. Enable local AI
+
+With Ollama installed and running:
 
 ```bash
-npm run dev        # http://localhost:3000
+ollama pull qwen2.5-coder:7b
 ```
 
-Generated PDFs and uploads land in `storage/` (git-ignored); dev emails in
-`storage/mail/`; every SMS is printed to the console and stored in the
-`smsmessages` collection.
+```dotenv
+OLLAMA_BASE_URL=http://127.0.0.1:11434
+OLLAMA_MODEL=qwen2.5-coder:7b
+```
 
-## Scripts
+Open **Admin → Seltiv AI**. Run Ollama on the same host or use a private endpoint reachable by the application server. Choose hardware with enough memory for the model and the school workload.
+
+## Deployment and integrations
+
+Each school branch runs its own Node.js process and MongoDB database. Build with `npm run build`, serve with `npm start`, and put a TLS reverse proxy in front. Configure scheduled attendance and fee-reminder jobs for your deployment.
+
+| Service | Current integration |
+|---|---|
+| Database | MongoDB through Mongoose |
+| Images | Cloudinary, with local disk fallback |
+| Documents | React PDF; Supabase Storage, with local disk fallback |
+| Email | SMTP through Nodemailer; local `.eml` files in development |
+| SMS | Placeholder adapter that records messages; connect a real gateway for delivery |
+| Payments | Mock bKash checkout; connect and verify a real payment provider before taking payments |
+| AI | Server-side Ollama, defaulting to Qwen 2.5 Coder 7B |
+
+[Deployment guide →](docs/DEPLOYMENT.md) · [Environment reference →](.env.example)
+
+## Development
+
+Built with **Next.js 16, React 19, TypeScript, Tailwind CSS 4, MongoDB, and NextAuth**.
 
 | Command | Purpose |
 |---|---|
-| `npm run dev` | Dev server |
-| `npm run build` / `npm start` | Production build & serve |
-| `npm run seed -- --fresh` | Wipe and reseed |
-| `npm run typecheck` | `tsc --noEmit` |
-| `npm test` | Vitest unit tests (fee/GPA/rank/SMS math) |
-| `npm run test:e2e` | Playwright smoke flows |
+| `npm run dev` | Start development server |
+| `npm run build` / `npm start` | Build and serve |
+| `npm run typecheck` | TypeScript checks |
+| `npm test` | Unit tests |
+| `npm run test:e2e` | Playwright flows |
 
-## Deployment
+This is an actively developed project. Some full-repository TypeScript issues are documented in the [AI implementation notes](docs/ai-grading.md#validation). The videos demonstrate specific workflows, not a claim that every production integration is complete.
 
-See [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) — Netlify for the demo, VPS +
-PM2 + system cron for production.
+---
+
+Built by **[Sudipta Goswami](https://sudipta.seltiv.com)** · [Discuss a deployment](mailto:sudiptagoswami63@gmail.com)

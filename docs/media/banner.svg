@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="340" viewBox="0 0 1200 340" role="img" aria-labelledby="title">
+<title id="title">Seltiv SLMS — Your SLMS. Your server. Built-in AI.</title>
+<defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#244149" stroke-width="0.6"/></pattern></defs>
+<rect width="1200" height="340" rx="18" fill="#0b2029"/><rect width="1200" height="340" rx="18" fill="url(#grid)"/>
+<g font-family="monospace"><text x="52" y="53" font-size="14" fill="#79e6c1">SELTIV / STUDENT LIFECYCLE MANAGEMENT</text>
+<text x="48" y="127" font-size="57" font-family="sans-serif" font-weight="700" fill="#f1f7f2">Your SLMS. Your server.</text>
+<text x="52" y="172" font-size="20" fill="#b4ccd1">Grow your school. Skip the per-student software fees.</text>
+<path d="M52 204H1148" stroke="#35525a"/>
+<text x="52" y="244" font-size="16" fill="#79e6c1">ADMISSIONS → ACADEMICS → FINANCE → NEXT YEAR</text>
+<text x="52" y="291" font-size="14" fill="#b4ccd1">4 PORTALS</text><text x="244" y="291" font-size="14" fill="#b4ccd1">SELF-HOSTED</text><text x="450" y="291" font-size="14" fill="#b4ccd1">LOCAL AI</text>
+<rect x="813" y="257" width="335" height="45" rx="8" fill="#173b3c"/><text x="838" y="285" font-size="14" fill="#79e6c1">REQUEST → REVIEW → APPROVE</text></g></svg>
