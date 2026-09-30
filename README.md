@@ -3,6 +3,7 @@
 </p>
 
 <p align="center">
+  <a href="https://slms.seltiv.com">SLMS website</a> ·
   <a href="#watch-it-work">Watch the demos</a> ·
   <a href="#built-in-ai-for-academic-changes">Meet Seltiv AI</a> ·
   <a href="#getting-started">Run it yourself</a> ·
